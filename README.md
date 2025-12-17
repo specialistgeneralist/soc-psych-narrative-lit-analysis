@@ -113,15 +113,33 @@ Notes:
 
 ## Running specific experiments
 
-A specific set of params for HDBSCAN/trimap etc. can be run to override defaults (in `config.py`). To do this, pass an experiment file via `--experiment`:
+A specific set of params for HDBSCAN/trimap etc. can be run to override defaults (in `config.py`). To do this, pass an experiment file via `--exp`:
 
-`python -m src.main --do all --models large --experiment experiments/my_experiment.json`
+`python -m src.main --do all --models large --exp experiments/my_experiment.json`
 
 The tag will in the first instance be taken from the experiment file, but can be overridden via `--tag`.
 
 An example experiment file is provided in `experiments/demo.json`.
 
-## Reproducibility
+# Replication
+
+To reproduce 'baseline' results:
+
+1. Parameter search for TriMAP and HDBSCAN:
+
+`python -m src.main --tune-trimap --do embeddings --models large --tag baseline --input replication/04112025_conceptualised_articles_103_cleaned_normalised_nocounts.csv`
+
+`python -m src.main --tune-hdbscan --do embeddings --models large --tag baseline --input replication/04112025_conceptualised_articles_103_cleaned_normalised_nocounts.csv`
+
+2. Rank and select best parameters from HDBSCAN tuning results (see ranking script above).
+
+`python -m src.tools.rank_hdbscan_results replication/tune_hdbscan_tuning_hdbscan.json --top 30 --composite --out replication/hdbscan_ranking.json`
+
+3. Run end-to-end with selected parameters (replace with your chosen params):
+
+`python -m src.main --do all --models large --tag baseline --exp experiments/baseline.json --input replication/04112025_conceptualised_articles_103_cleaned_normalised_nocounts.csv`
+
+## Notes on Reproducibility
 
 - Random seeds are fixed via `SEED` in `.env` (TriMAP and general RNGs).
 - All configuration, versions, and key parameters are serialized to JSON in `outputs/results`.

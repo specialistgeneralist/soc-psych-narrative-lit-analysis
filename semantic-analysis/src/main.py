@@ -23,10 +23,10 @@ def read_input_tsv(path: Path, text_column: str) -> pd.DataFrame:
     return df
 
 
-def stage_embeddings(cfg: PipelineConfig, df: pd.DataFrame, which: List[str]) -> Dict[str, Path]:
+def stage_embeddings(tag: str, cfg: PipelineConfig, df: pd.DataFrame, which: List[str]) -> Dict[str, Path]:
     paths: Dict[str, Path] = {}
     for key in which:
-        p = compute_and_store_embeddings(cfg, df, model_key=key, overwrite=True)
+        p = compute_and_store_embeddings(tag,cfg, df, model_key=key, overwrite=True)
         paths[key] = p
     return paths
 
@@ -284,7 +284,7 @@ def main():
     df_emb: Optional[pd.DataFrame] = None
 
     if run_embeddings:
-        emb_paths = stage_embeddings(cfg, df_input, which=selected_models)
+        emb_paths = stage_embeddings(tag, cfg, df_input, which=selected_models)
         save_json({k: str(v) for k, v in emb_paths.items()}, results_dir / f"{tag}_embedding_paths.json")
 
     # Decide which embedding key to use

@@ -61,6 +61,7 @@ def embed_texts_openai(cfg: PipelineConfig, texts: list[str], model: str, batch_
 
 
 def compute_and_store_embeddings(
+    tag: str,
     cfg: PipelineConfig,
     df: pd.DataFrame,
     model_key: str = "small",
@@ -81,7 +82,7 @@ def compute_and_store_embeddings(
     texts = df[cfg.data.text_column].astype(str).tolist()
     hashes = [text_hash(t) for t in texts]
 
-    out_path = cfg.paths.embeddings_dir / f"embeddings_{model_key}.parquet"
+    out_path = cfg.paths.embeddings_dir / f"{tag}_embeddings_{model_key}.parquet"
 
     if out_path.exists() and not overwrite:
         print(f"Found existing embeddings at {out_path}. Skipping recompute (use overwrite=True to force).")

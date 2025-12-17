@@ -3,3 +3,5 @@
 semantic-analysis/outputs/plots/*
 semantic-analysis/outputs/results/*
 semantic-analysis/outputs/summaries/*
+semantic-analysis/src/__pycache__/*.pyc
+semantic-analysis/src/pipeline/__pycache__/*.pyc
