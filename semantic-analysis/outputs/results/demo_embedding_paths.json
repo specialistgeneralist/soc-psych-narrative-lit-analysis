@@ -1,0 +1,4 @@
+{
+  "small": "outputs/embeddings/embeddings_small.parquet",
+  "large": "outputs/embeddings/embeddings_large.parquet"
+}

@@ -1,0 +1,14 @@
+python-dotenv>=1.0.1
+pandas>=2.1
+numpy>=1.26
+pyarrow>=14.0
+openai>=1.40
+anthropic>=0.34
+scikit-learn>=1.4
+hdbscan>=0.8.33
+trimap>=1.1.4
+matplotlib>=3.8
+seaborn>=0.13
+scipy>=1.11
+numba>=0.58
+packaging>=23.2
