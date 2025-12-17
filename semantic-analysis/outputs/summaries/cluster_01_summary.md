@@ -1,9 +1,10 @@
 ## Narratives as Collective Sense-Making Frameworks
 
-Narratives function as interpretive structures that organize social information into coherent, intelligible accounts. Across contexts, they serve as shared templates that identify relevant actors, assign motives, and establish causal or sequential connections among events. By integrating disparate cues and filling evidentiary gaps, narratives enable groups to construct meaning under conditions of uncertainty or ambiguity. They operate simultaneously at cognitive and cultural levels: as cognitive tools, they bundle situational and dispositional elements into plausible explanations of behavior; as cultural artifacts, they provide widely recognized scripts that specify normative event sequences and appropriate emotional responses. Through these mechanisms, narratives shape collective judgment by defining boundaries of normalcy, deviance, and legitimacy. They guide not only retrospective interpretation but also prospective expectations, influencing what outcomes are anticipated or deemed desirable. The unifying theme is narratives' role in reducing complexity and enabling coordinated understanding within social groups.
+Narratives function as interpretive structures that organize social information into coherent, shared accounts of events and behaviors. Across these texts, narratives are characterized as templates or scripts that integrate disparate cues—situational details, actor motives, and behavioral sequences—into intelligible stories. They serve a fundamental sense-making role, particularly under conditions of uncertainty or incomplete evidence, by providing plausible causal connections and filling inferential gaps. 
+
+Beyond individual cognition, narratives operate at the collective level as cultural resources that guide group understanding. They delineate relevant actors, attribute intentions, and establish expectations about event sequences and outcomes. By embedding culturally normative patterns and emotional responses, narratives also shape evaluative judgments, defining what appears normal, deviant, or morally justified within a given social context. The unifying theme is narratives' dual function: cognitively organizing ambiguous information and culturally standardizing interpretation across members of a community.
 
 **Sub-themes:**
-- Cognitive integration and gap-filling under uncertainty
-- Cultural scripting and normative expectation-setting
-- Attribution of motives and causal sequencing
-- Boundary definition (normal/deviant/justified)
+- Cognitive coherence and gap-filling under uncertainty
+- Cultural transmission of interpretive templates
+- Normative framing and moral evaluation

@@ -1,10 +1,8 @@
 # Narratives as Organizing Structures for Memory, Meaning, and Identity
 
-Narratives function as structured frameworks that organize experiences and memories into coherent, meaningful sequences across individual, social, and collective levels. At their core, narratives transform discrete events into connected storylines that facilitate interpretation, sense-making, and communication. This organizational capacity operates through temporal sequencing and thematic linkage, enabling actors to extract significance from what has occurred and to understand its implications.
-
-The unifying mechanism across contexts is narrative's role in constructing and maintaining continuity—whether of personal identity, collective memory, or shared understanding. At the individual level, narratives support self-definition by selectively arranging autobiographical memories into stable identity accounts that persist across time and situations. At the community level, narratives structure collective memory around pivotal moments and moral interpretations, providing frameworks for commemoration and shared historical understanding. Across these scales, narratives serve as cognitive and social tools that bridge episodic experience with enduring meaning.
+Narratives function as structured, story-like frameworks that organize experiences and events into coherent, meaningful sequences. Across individual, collective, and identity-related contexts, narratives serve to connect discrete occurrences into interpretable arcs that facilitate sense-making and communication. At the individual level, narratives transform episodic experiences into organized accounts that support memory retrieval and personal understanding of significance and causality. At the collective level, they structure shared historical memory around pivotal moments and moral interpretations, enabling communities to maintain cohesive understandings of the past through commemorative practices. At the identity level, narratives operate as self-defining storylines that selectively sequence autobiographical memories to sustain continuity and coherence of the self across time and contexts. The unifying mechanism is the imposition of temporal and causal structure on otherwise fragmented information, enabling both storage and transmission of meaning.
 
 **Sub-themes:**
-- Individual identity construction and self-continuity
-- Collective memory and community-level meaning-making
-- Temporal organization and causal interpretation of events
+- Individual sense-making and episodic memory organization
+- Collective memory and community-level historical interpretation
+- Identity construction and maintenance of self-continuity

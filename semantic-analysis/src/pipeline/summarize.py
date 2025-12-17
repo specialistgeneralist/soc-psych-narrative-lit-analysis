@@ -38,6 +38,7 @@ def render_prompt(template_md: str, cluster_id: int, items: List[str], k: int) -
 
 
 def summarize_clusters(
+    tag: str,
     cfg: PipelineConfig,
     embeddings_unit: np.ndarray,
     df_embeddings: pd.DataFrame,
@@ -82,7 +83,7 @@ def summarize_clusters(
 
         # Save per-cluster summary
         out_dir.mkdir(parents=True, exist_ok=True)
-        out_path = out_dir / f"cluster_{c:02d}_summary.md"
+        out_path = out_dir / f"{tag}_cluster_{c:02d}_summary.md"
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(summary_text)
 

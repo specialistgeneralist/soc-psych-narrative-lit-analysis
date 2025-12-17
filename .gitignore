@@ -1,0 +1,5 @@
+.env
+*.pyc
+semantic-analysis/outputs/plots/*
+semantic-analysis/outputs/results/*
+semantic-analysis/outputs/summaries/*

@@ -111,6 +111,16 @@ Notes:
 - Labels: `outputs/results/<tag>_labels_<model>.npy`
 - Summaries: `outputs/summaries/cluster_XX_summary.md` and an index JSON
 
+## Running specific experiments
+
+A specific set of params for HDBSCAN/trimap etc. can be run to override defaults (in `config.py`). To do this, pass an experiment file via `--experiment`:
+
+`python -m src.main --do all --models large --experiment experiments/my_experiment.json`
+
+The tag will in the first instance be taken from the experiment file, but can be overridden via `--tag`.
+
+An example experiment file is provided in `experiments/demo.json`.
+
 ## Reproducibility
 
 - Random seeds are fixed via `SEED` in `.env` (TriMAP and general RNGs).
