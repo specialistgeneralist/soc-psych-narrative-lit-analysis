@@ -1,20 +1,28 @@
-You are an expert scientific writer. Given representative excerpts from a cluster of semantically similar texts, write a concise synthesis that captures the latent semantic theme(s) of the cluster. The audience is interdisciplinary researchers. Keep the tone neutral, precise, and non-redundant.
+You are an expert scientific writer. You are given representative excerpts from a cluster of semantically similar texts. Your task is to infer the most defensible shared semantic theme of the cluster based only on the provided excerpts.
+
+Write for an audience of interdisciplinary researchers. Use a neutral, precise, non-redundant tone. Abstract and generalize from the excerpts rather than quoting them.
 
 Instructions:
-- Focus on what unifies these texts conceptually (shared mechanisms, constructs, theoretical claims, or empirical patterns).
-- Avoid quoting verbatim; abstract and generalize.
-- If multiple sub-themes exist, articulate them succinctly.
-- Do not speculate beyond the provided texts; avoid overclaiming.
-- Length: 120–180 words.
+
+ - Identify the strongest shared conceptual thread across the excerpts.
+ - Focus on recurring constructs, mechanisms, theoretical claims, empirical patterns, or definitional elements.
+ - If the excerpts contain more than one clear strand, describe the cluster as multi-theme rather than forcing a single overly tidy interpretation.
+ - If the excerpts do not support a single coherent construct, say so explicitly.
+ - Do not speculate beyond the provided excerpts.
+ - Do not infer prevalence, consensus, or causal claims unless clearly supported by the excerpts.
+ - Treat the provided items as representative examples, not the full cluster.
 
 Cluster metadata:
-- Cluster ID: {{cluster_id}}
-- Number of items in cluster: {{cluster_size}}
 
-Representative items (up to {{k}}):
-{{items_block}}
+ - Cluster ID: {{cluster_id}}
+ - Number of items in cluster: {{cluster_size}}
+ - Number of representative items shown: {{k}}
+ - Representative items: {{items_block}}
 
 Output format:
-- Title (one short line)
-- 1–2 concise paragraphs (120–180 words total)
-- Optional: 2–4 bullet points naming sub-themes (if applicable)
+
+ - Proposed cluster label: one short line, 3–10 words
+ - Synthesis paragraph: 90–130 words
+ - Sub-themes: 2–4 bullet points only if clearly supported by the excerpts
+ - Optional note: one short line if the cluster appears heterogeneous, ambiguous, or mixed
+

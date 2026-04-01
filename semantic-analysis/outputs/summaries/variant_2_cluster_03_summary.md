@@ -1,0 +1,11 @@
+**Proposed cluster label:** Narratives as Ideological Frameworks for Significance and Action
+
+**Synthesis paragraph:** Across these excerpts, a consistent theoretical construct emerges: narratives are ideological meaning-frameworks that simultaneously explain social reality and prescribe behavior, with particular emphasis on their role in fulfilling individuals' psychological need for significance. Narratives define worthy goals, legitimate specific courses of action—including morally transgressive ones—and reduce cognitive or moral conflict by reframing prescribed behaviors as necessary and laudable. Their efficacy depends critically on endorsement by socially significant networks, which validate and reinforce their content. The construct integrates cognitive, motivational, and social dimensions, positioning narratives as culturally embedded structures that link individual identity and perceived worth to group-sanctioned conduct.
+
+**Sub-themes:**
+- **Significance motivation:** Narratives are specifically theorized as mechanisms for restoring or attaining personal and social worth, particularly under conditions of perceived threat or deprivation.
+- **Moral licensing and action facilitation:** Narratives function to neutralize moral inhibitions, rendering otherwise transgressive behaviors permissible or obligatory within the ideological framework.
+- **Social validation as a necessary condition:** The psychological and behavioral efficacy of a narrative is contingent on its endorsement by networks meaningful to the individual, not on its content alone.
+- **Dual explanatory-prescriptive structure:** Narratives consistently operate on two levels—interpreting circumstances and specifying appropriate responses—linking grievance or need to sanctioned remediation.
+
+**Optional note:** The excerpts appear drawn from a specific theoretical tradition (likely significance quest theory applied to radicalization); generalizability beyond that domain is not established by the provided material.

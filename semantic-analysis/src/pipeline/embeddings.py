@@ -13,8 +13,13 @@ from .config import PipelineConfig
 from .utils import ensure_dirs, normalize_rows, text_hash
 
 
+# --- Embeddings stage ---
+# This module calls the OpenAI embeddings API, caches results to parquet, and stores both raw and unit-normalized vectors.
+
+
 @dataclass
 class EmbeddingRecord:
+    # Lightweight schema for a single embedding row (primarily for clarity; parquet is the main storage format).
     id: str
     text: str
     text_hash: str
@@ -23,6 +28,7 @@ class EmbeddingRecord:
 
 
 def _batched(iterable: Iterable, n: int):
+    # Minimal batching helper so we can stream large datasets through an API safely.
     batch = []
     for item in iterable:
         batch.append(item)
@@ -34,6 +40,7 @@ def _batched(iterable: Iterable, n: int):
 
 
 def _openai_embed(client: OpenAI, model: str, texts: list[str]) -> list[list[float]]:
+    # Thin wrapper around the OpenAI embeddings endpoint; API responses include an index field we sort by.
     # OpenAI embeddings API expects a list of inputs
     resp = client.embeddings.create(model=model, input=texts)
     # Ensure order
@@ -42,6 +49,8 @@ def _openai_embed(client: OpenAI, model: str, texts: list[str]) -> list[list[flo
 
 
 def embed_texts_openai(cfg: PipelineConfig, texts: list[str], model: str, batch_size: int = 96, pause: float = 0.5) -> list[list[float]]:
+    # Call the embeddings API in batches, with a simple exponential backoff for transient failures/rate limits.
+    # Note: `cfg` is currently unused, but kept for symmetry with other stages and future provider switching.
     client = OpenAI()
     vectors: list[list[float]] = []
     for batch in _batched(texts, batch_size):
@@ -61,12 +70,13 @@ def embed_texts_openai(cfg: PipelineConfig, texts: list[str], model: str, batch_
 
 
 def compute_and_store_embeddings(
-    tag: str,
     cfg: PipelineConfig,
     df: pd.DataFrame,
     model_key: str = "small",
     overwrite: bool = False,
 ) -> Path:
+    # Compute embeddings for the configured text column and persist them as a parquet artifact in embeddings_dir.
+    # Output schema includes: id/text/text_hash/model/vector (raw) and vector_unit (row-normalized).
     assert model_key in ("small", "large"), "model_key must be 'small' or 'large'"
     model = cfg.models.openai_small if model_key == "small" else cfg.models.openai_large
 
@@ -77,12 +87,14 @@ def compute_and_store_embeddings(
     if id_col and id_col in df.columns:
         ids = df[id_col].astype(str).tolist()
     else:
+        # If no explicit id column exists, fall back to stable positional ids for this input file.
         ids = [str(i) for i in range(len(df))]
 
     texts = df[cfg.data.text_column].astype(str).tolist()
     hashes = [text_hash(t) for t in texts]
+    # Hashes let us detect text changes across runs while keeping a short, deterministic identifier.
 
-    out_path = cfg.paths.embeddings_dir / f"{tag}_embeddings_{model_key}.parquet"
+    out_path = cfg.paths.embeddings_dir / f"embeddings_{model_key}.parquet"
 
     if out_path.exists() and not overwrite:
         print(f"Found existing embeddings at {out_path}. Skipping recompute (use overwrite=True to force).")
@@ -106,11 +118,13 @@ def compute_and_store_embeddings(
         }
     )
 
+    # Persist as parquet so downstream stages can load embeddings without re-calling the API.
     recs.to_parquet(out_path, index=False)
     print(f"Saved embeddings to {out_path}")
     return out_path
 
 
 def load_embeddings(path: Path) -> pd.DataFrame:
+    # Centralized loader for the embeddings parquet produced by compute_and_store_embeddings().
     df = pd.read_parquet(path)
     return df
