@@ -6,3 +6,4 @@ semantic-analysis/outputs/embeddings/*
 semantic-analysis/outputs/results/*
 semantic-analysis/src/__pycache__/*.pyc
 semantic-analysis/src/pipeline/__pycache__/*.pyc
+semantic-analysis/outputs/robustness_mvp/*

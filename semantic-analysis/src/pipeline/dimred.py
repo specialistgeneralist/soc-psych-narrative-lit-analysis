@@ -6,6 +6,7 @@ from typing import Dict, Tuple
 import numpy as np
 import pandas as pd
 from sklearn.manifold import trustworthiness
+from sklearn.metrics import pairwise_distances
 import trimap
 
 from .config import PipelineConfig
@@ -21,7 +22,6 @@ class TriMAPResult:
     Y: np.ndarray  # 2D embedding (n, 2)
     metrics: Dict[str, float]
     params: Dict[str, float]
-
 
 def run_trimap(
     cfg: PipelineConfig,
@@ -47,6 +47,9 @@ def run_trimap(
         # TriMAP needs at least two other points for inlier selection.
         n_inliers = n_samples - 2
 
+    # Precompute distance matrix to avoid annoy estimation.
+    D = pairwise_distances(X_unit, metric=metric)
+
     # Note: the trimap library doesn't expose a seed parameter here; reproducibility is typically handled
     # by setting global RNG state upstream (see set_global_seed in utils.py).
     reducer = trimap.TRIMAP(
@@ -54,11 +57,11 @@ def run_trimap(
         n_outliers=n_outliers,
         n_random=n_random,
         n_iters=n_iters,
-        distance=metric,
+        use_dist_matrix=True,
         verbose=True,
     )
 
-    Y = reducer.fit_transform(X_unit)
+    Y = reducer.fit_transform(D)
 
     # Goodness-of-fit metric: trustworthiness (higher is better).
     # trustworthiness requires n_neighbors < n_samples, and behaves best with a modest neighborhood size.

@@ -10,6 +10,9 @@ PyYAML
 # API clients
 openai
 anthropic
+# Google Vertex embeddings use local Application Default Credentials through
+# the `gcloud` CLI plus Python standard-library REST calls; no Python Google
+# SDK dependency is required for that optional robustness arm.
 
 # Dimensionality reduction + clustering
 scikit-learn

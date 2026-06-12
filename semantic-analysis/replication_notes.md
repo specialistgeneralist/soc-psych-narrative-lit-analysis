@@ -176,3 +176,47 @@ Elapsed time: 0:00:01.514706
 ### Discussion
 
 One would now compare the plots across baseline vs. variants, and the cluster summaries. Ideally we can map cluster summaries from the n=5 cases back to the n=3.
+
+# Robustness
+
+Central question: how sensitive are our baseline/final results to methodological choices?
+
+## Note on TriMap visualistion
+
+We should store the mapping from high-D to low-D space, so that points are not moving between runs. 
+
+## Sources of Variation
+
+Roughly in order of the pipeline, we have the following sources of potential non-data driven variation.
+We aim to test the 'baseline' spec in all cases varying only one angle each time.
+In each case, we aim to conduct clustering comparison between the baseline and the variant using pairwise ARI, AMI, NMI, noise-status agreement, and co-cluster Jaccard. 
+
+### A. Vector representation
+
+Vector embeddings could be sensitive to the LLM model training/data.
+--> Test with different model from same house (e.g. -small vs. --large variant from OpenAI; a google/gemini embeddings model) [baseline]
+
+### B. Pseudo random number generation
+ 
+Could results depend on random number state? Whilst HDBSCAN is a deterministic algorithm, though since we include PCA (2-d) as gateway, which takes a seed, this does introduce varation.
+--> Test with different seeds [baseline]
+
+### C. HDBSCAN parameters
+
+Do results depend on a particular HDBSCAN config? We have three 'regimes' in the HDBSCAN tuning results. We can test the stability of downstream clustering from each of these regimes.
+--> Test Intra-compare Baseline to Variant 1, Baseline to Variant 2
+
+### D. Cluster labelling: model choice
+
+Are LLM-generated labels/descriptions affected by LLM model bias? Clusters are automatically labelled and described from 10 central definitions. Generative models are not deterministic, and training/architecture and alignment of models differ. We may introduce bias from any of these sources.
+--> Test inter-model text descriptions from another model from the same house (Anthropic) and one other model from a different house [baseline]
+
+### E. Knock-out trials
+
+Do results depend strongly on some particular data point or points? Check that results are not dependent on a small fraction of the data.
+--> Test by running boot-strap like trials where we sub-sample 90%, 80%, 70% of the data, and check pair-wise agreement for the surviving pairs versus baseline.
+
+## Run:
+
+python -m src.robustness.run_robustness --spec configs/robustness_mvp.yaml
+

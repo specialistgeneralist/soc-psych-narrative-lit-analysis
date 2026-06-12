@@ -1,0 +1,38 @@
+# Assistant file-tool ignore rules
+# Syntax follows .gitignore / ripgrep ignore-file conventions.
+# These defaults replace the old hidden bridge denylist; edit them to match this workspace.
+
+node_modules/
+.git/
+bower_components/
+vendor/
+build/
+dist/
+out/
+target/
+.next/
+.nuxt/
+.cache/
+.tmp/
+tmp/
+temp/
+coverage/
+__pycache__/
+.pytest_cache/
+venv/
+.venv/
+env/
+.env/
+Pods/
+DerivedData/
+.idea/
+.vscode/
+.vs/
+obj/
+bin/
+packages/
+.turbo/
+.parcel-cache/
+.*_cache/
+.*.tmp/
+venv-macstudio/

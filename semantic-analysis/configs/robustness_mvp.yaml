@@ -1,0 +1,48 @@
+baseline_config: configs/baseline.yaml
+baseline_tag: baseline
+baseline_model_key: large
+output_dir: outputs/robustness_mvp
+trimap_n_iters: 1000
+
+# A. Vector representation: OpenAI large baseline vs OpenAI small.
+run_vector_openai_small: true
+
+# A2. Vector representation: OpenAI large baseline vs Google Vertex Gemini embeddings.
+# Requires local Google Application Default Credentials (ADC) in the workspace host.
+# The runner uses `gcloud auth application-default print-access-token` and does not
+# require a Google API key. Leave google_vertex_project null to infer from env vars
+# or `gcloud config get-value project`.
+run_vector_google_vertex: true
+google_vertex_project: null
+google_vertex_location: us-central1
+google_vertex_model: gemini-embedding-001
+google_vertex_task_type: CLUSTERING
+google_vertex_output_dimensionality: 3072
+google_vertex_model_key: google_gemini_embedding_001
+google_vertex_tag: robust_google_gemini_embedding_001
+
+# B. Pseudo-random seed variation for the PCA gateway used by HDBSCAN.
+run_seed_variants: true
+seed_variants: [7, 123, 2026, 31415, 8675309]
+
+# C. HDBSCAN regimes from tuning results.
+run_hdbscan_regime_comparison: true
+hdbscan_variant_tags: [variant_1, variant_2]
+hdbscan_variant_configs: [configs/variant_1.yaml, configs/variant_2.yaml]
+
+# D. Labelling model choice. Disabled by default so the clustering robustness
+# run remains cheap and deterministic. To run, set true and add exact available
+# Anthropic model ids under labelling_variants.
+run_labelling_variants: false
+labelling_variants: []
+# Example, if available in your Anthropic account:
+# labelling_variants:
+#   - provider: anthropic
+#     model: claude-haiku-4-5
+#     tag: label_anthropic_haiku
+
+# E. Knockout trials: subsample and compare surviving ids/pairs to baseline.
+run_knockout_trials: true
+knockout_fractions: [0.9, 0.8, 0.7]
+knockout_trials_per_fraction: 10
+knockout_seed: 424242
