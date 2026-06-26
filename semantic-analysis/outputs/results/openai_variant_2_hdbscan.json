@@ -1,0 +1,21 @@
+{
+  "metrics": {
+    "n_clusters": 4.0,
+    "frac_noise": 0.12403100775193798,
+    "silhouette": 0.6514041423797607,
+    "silhouette_eval": 0.09974687546491623,
+    "silhouette_eval_pca_dim": 20.0
+  },
+  "params": {
+    "min_cluster_size": 5.0,
+    "min_samples": 8.0,
+    "metric": "euclidean",
+    "cluster_selection_method": "leaf",
+    "cluster_selection_epsilon": 0.0,
+    "allow_single_cluster": 0.0,
+    "p": -1.0,
+    "n_jobs": -1.0,
+    "pca_dim": 2.0,
+    "silhouette_eval_metric": "euclidean"
+  }
+}

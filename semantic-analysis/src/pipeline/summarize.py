@@ -92,10 +92,18 @@ def write_meta_summary(
     meta_template = load_prompt_template(meta_prompt_path)
     prompt = render_meta_prompt(meta_template, summaries)
 
-    msg = client.messages.create(
-        model=cfg.models.anthropic_model,
-        max_tokens=3000,
-        temperature=0.1,
+    # catch Opus model (no temperature), look for containing 'opus'
+    if "opus" in cfg.models.anthropic_model:
+        msg = client.messages.create(
+            model=cfg.models.anthropic_model,
+            max_tokens=3000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+    else:
+        msg = client.messages.create(
+            model=cfg.models.anthropic_model,
+            max_tokens=3000,
+            temperature=0.1,
         messages=[
             {"role": "user", "content": prompt},
         ],
@@ -135,14 +143,22 @@ def summarize_clusters(
 
         prompt = render_prompt(prompt_template, cluster_id=c, cluster_size=len(idx), items=items, k=cfg.top_k_per_cluster)
 
-        msg = client.messages.create(
-            model=cfg.models.anthropic_model,
-            max_tokens=3000,
-            temperature=0.1,
-            messages=[
-                {"role": "user", "content": prompt},
-            ],
-        )
+        # catch Opus model (no temperature):
+        if "opus" in cfg.models.anthropic_model:
+            msg = client.messages.create(
+                model=cfg.models.anthropic_model,
+                max_tokens=3000,
+                messages=[{"role": "user", "content": prompt}],
+            )
+        else:
+            msg = client.messages.create(
+                model=cfg.models.anthropic_model,
+                max_tokens=3000,
+                temperature=0.1,
+                messages=[
+                    {"role": "user", "content": prompt},
+                ],
+            )
         summary_text = extract_text_content(msg)
 
         summary = ClusterSummary(

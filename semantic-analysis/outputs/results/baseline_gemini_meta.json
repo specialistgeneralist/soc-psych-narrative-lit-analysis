@@ -1,0 +1,117 @@
+{
+  "config": {
+    "seed": 42,
+    "paths": {
+      "input_tsv": "data/04112025_conceptualised_articles_103_cleaned_normalised_nocounts.csv",
+      "output_dir": "outputs",
+      "embeddings_dir": "outputs/embeddings",
+      "plots_dir": "outputs/plots",
+      "results_dir": "outputs/results",
+      "summaries_dir": "outputs/summaries",
+      "cache_dir": "outputs/cache"
+    },
+    "models": {
+      "openai_small": "text-embedding-3-small",
+      "openai_large": "text-embedding-3-large",
+      "anthropic_model": "claude-sonnet-4-6"
+    },
+    "data": {
+      "text_column": "text_normalised",
+      "id_column": "uid"
+    },
+    "visualization": {
+      "marker_size": 30.0
+    },
+    "use_models": [
+      "google_gemini_embedding_001"
+    ],
+    "metric": "euclidean",
+    "trimap_n_inliers": 20,
+    "trimap_n_outliers": 5,
+    "trimap_n_random": 3,
+    "trimap_n_iters": 400,
+    "trimap_grid_n_inliers": [
+      5,
+      10,
+      15,
+      20
+    ],
+    "trimap_grid_n_outliers": [
+      3,
+      5,
+      10,
+      15
+    ],
+    "trimap_grid_n_random": [
+      2,
+      3,
+      5,
+      10
+    ],
+    "hdbscan_min_cluster_size": 5,
+    "hdbscan_min_samples": 8,
+    "hdbscan_pca_dim": 2,
+    "hdbscan_metric": "manhattan",
+    "hdbscan_selection_method": "leaf",
+    "hdbscan_cluster_selection_epsilon": 0.0,
+    "hdbscan_silhouette_eval_pca_dim": 20,
+    "hdbscan_silhouette_eval_metric": null,
+    "hdbscan_grid_min_cluster_size": [
+      5,
+      10,
+      15,
+      20,
+      25
+    ],
+    "hdbscan_grid_min_samples": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "hdbscan_grid_selection_method": [
+      "leaf",
+      "eom"
+    ],
+    "hdbscan_grid_selection_epsilon": [
+      0.0,
+      0.01,
+      0.1
+    ],
+    "hdbscan_grid_allow_single_cluster": [
+      false
+    ],
+    "hdbscan_grid_metric": [
+      "euclidean",
+      "manhattan"
+    ],
+    "hdbscan_grid_pca_dim": [
+      null,
+      2,
+      3,
+      4,
+      5,
+      10,
+      20
+    ],
+    "top_k_per_cluster": 10
+  },
+  "config_path": "configs/baseline_gemini.yaml",
+  "package_versions": {
+    "pandas": "3.0.1",
+    "numpy": "2.4.3",
+    "openai": "2.30.0",
+    "anthropic": "0.86.0",
+    "scikit-learn": "1.8.0",
+    "hdbscan": "0.8.41",
+    "trimap": "1.1.5",
+    "matplotlib": "3.10.8",
+    "seaborn": "0.13.2",
+    "scipy": "1.17.1",
+    "pyarrow": "23.0.1",
+    "pyyaml": "6.0.3"
+  },
+  "tag": "baseline_gemini",
+  "save_dimred_map": null,
+  "use_dimred_map": "outputs/results/baseline_openai_dimred_map_large.json"
+}

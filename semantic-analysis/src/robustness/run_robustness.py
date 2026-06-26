@@ -51,6 +51,8 @@ class RobustnessSpec:
     google_vertex_output_dimensionality: int | None = 3072
     google_vertex_model_key: str = "google_gemini_embedding_001"
     google_vertex_tag: str = "robust_google_gemini_embedding_001"
+    google_vertex_config: str | None = None
+    google_vertex_reuse_embeddings_only: bool = True
     knockout_fractions: list[float] = field(default_factory=lambda: [0.9, 0.8, 0.7])
     knockout_trials_per_fraction: int = 10
     knockout_seed: int = 424242
@@ -255,18 +257,36 @@ def run_google_vertex_representation(
     if not spec.run_vector_google_vertex:
         return []
 
-    settings = VertexEmbeddingSettings(
-        project=infer_google_project(spec.google_vertex_project),
-        location=spec.google_vertex_location,
-        model=spec.google_vertex_model,
-        task_type=spec.google_vertex_task_type,
-        output_dimensionality=spec.google_vertex_output_dimensionality,
-        model_key=spec.google_vertex_model_key,
-    )
-    emb_path = compute_and_store_vertex_embeddings(cfg, df_input, settings, overwrite=False)
+    # The Google/Gemini representation comparison should use the independently tuned
+    # Gemini config (usually configs/baseline_gemini.yaml), not the OpenAI baseline
+    # HDBSCAN settings. This function does not perform any ranking or optimisation.
+    cfg_google = load_config(spec.google_vertex_config) if spec.google_vertex_config else copy.deepcopy(cfg)
+
+    # In reuse-only mode we must not touch gcloud/ADC at all. The previous version
+    # constructed VertexEmbeddingSettings before checking the cached parquet, which
+    # called infer_google_project(...) and could fail on machines without gcloud.
+    emb_path = cfg_google.paths.embeddings_dir / f"embeddings_{spec.google_vertex_model_key}.parquet"
+    if emb_path.exists():
+        print(f"Found existing Vertex embeddings at {emb_path}. Reusing cached parquet.")
+    elif spec.google_vertex_reuse_embeddings_only:
+        raise FileNotFoundError(
+            "Google Vertex/Gemini robustness is configured as reuse-only, but cached embeddings were not found: "
+            f"{emb_path}. Compute them before running robustness, or set google_vertex_reuse_embeddings_only: false."
+        )
+    else:
+        settings = VertexEmbeddingSettings(
+            project=infer_google_project(spec.google_vertex_project),
+            location=spec.google_vertex_location,
+            model=spec.google_vertex_model,
+            task_type=spec.google_vertex_task_type,
+            output_dimensionality=spec.google_vertex_output_dimensionality,
+            model_key=spec.google_vertex_model_key,
+        )
+        emb_path = compute_and_store_vertex_embeddings(cfg_google, df_input, settings, overwrite=False)
+
     df_google = load_embeddings(emb_path)
     variant = _save_cluster_run(
-        cfg,
+        cfg_google,
         df_google,
         out_dir,
         spec.google_vertex_tag,
@@ -274,10 +294,11 @@ def run_google_vertex_representation(
         extra_meta={
             "source_of_variation": "vector_representation",
             "provider": "google_vertex",
-            "embedding_model": settings.model,
-            "task_type": settings.task_type,
-            "output_dimensionality": settings.output_dimensionality,
-            "location": settings.location,
+            "clustering_config": spec.google_vertex_config or spec.baseline_config,
+            "embedding_model": spec.google_vertex_model,
+            "task_type": spec.google_vertex_task_type,
+            "output_dimensionality": spec.google_vertex_output_dimensionality,
+            "location": spec.google_vertex_location,
         },
     )
     return [
@@ -288,9 +309,10 @@ def run_google_vertex_representation(
             experiment="A_vector_representation",
             extra={
                 "embedding_provider": "google_vertex",
-                "embedding_model": settings.model,
-                "embedding_task_type": settings.task_type,
-                "embedding_output_dimensionality": settings.output_dimensionality,
+                "embedding_model": spec.google_vertex_model,
+                "embedding_task_type": spec.google_vertex_task_type,
+                "embedding_output_dimensionality": spec.google_vertex_output_dimensionality,
+                "clustering_config": spec.google_vertex_config or spec.baseline_config,
             },
         )
     ]

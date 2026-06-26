@@ -1,0 +1,90 @@
+{
+  "summaries": [
+    {
+      "cluster_id": 0,
+      "n_items": 29,
+      "representative_indices": [
+        54,
+        60,
+        55,
+        35,
+        104,
+        122,
+        32,
+        68,
+        0,
+        99
+      ],
+      "summary_path": "outputs/summaries/baseline_gemini_cluster_00_summary.md"
+    },
+    {
+      "cluster_id": 1,
+      "n_items": 23,
+      "representative_indices": [
+        100,
+        69,
+        4,
+        77,
+        84,
+        88,
+        12,
+        128,
+        125,
+        11
+      ],
+      "summary_path": "outputs/summaries/baseline_gemini_cluster_01_summary.md"
+    },
+    {
+      "cluster_id": 2,
+      "n_items": 15,
+      "representative_indices": [
+        38,
+        13,
+        58,
+        95,
+        28,
+        115,
+        43,
+        96,
+        29,
+        19
+      ],
+      "summary_path": "outputs/summaries/baseline_gemini_cluster_02_summary.md"
+    },
+    {
+      "cluster_id": 3,
+      "n_items": 28,
+      "representative_indices": [
+        49,
+        39,
+        27,
+        85,
+        106,
+        71,
+        70,
+        75,
+        108,
+        3
+      ],
+      "summary_path": "outputs/summaries/baseline_gemini_cluster_03_summary.md"
+    },
+    {
+      "cluster_id": 4,
+      "n_items": 11,
+      "representative_indices": [
+        79,
+        57,
+        64,
+        21,
+        23,
+        16,
+        14,
+        114,
+        17,
+        63
+      ],
+      "summary_path": "outputs/summaries/baseline_gemini_cluster_04_summary.md"
+    }
+  ],
+  "meta_summary_path": "outputs/summaries/baseline_gemini_meta_summary.md"
+}

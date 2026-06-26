@@ -1,0 +1,18 @@
+{
+  "source": "fixed_dimred_map",
+  "map_path": "outputs/results/baseline_openai_dimred_map_large.json",
+  "map_model_key": "large",
+  "map_tag": "baseline_openai",
+  "metrics": {
+    "trustworthiness@10": 0.8715158965952942
+  },
+  "params": {
+    "n_inliers": 10,
+    "n_outliers": 10,
+    "n_random": 2,
+    "n_iters": 1000,
+    "metric": "euclidean",
+    "seed": 42
+  },
+  "note": "Coordinates were loaded from a fixed item-id map rather than recomputed. Use this for comparing alternate labels on a shared layout; cross-embedding use is visual alignment only."
+}

@@ -1,0 +1,69 @@
+seed: 42
+
+paths:
+  input_tsv: data/04112025_conceptualised_articles_103_cleaned_normalised_nocounts.csv
+  output_dir: outputs
+  embeddings_dir: outputs/embeddings
+  plots_dir: outputs/plots
+  results_dir: outputs/results
+  summaries_dir: outputs/summaries
+  cache_dir: outputs/cache
+
+models:
+  openai_small: text-embedding-3-small
+  openai_large: text-embedding-3-large
+  anthropic_model: claude-sonnet-4-6
+  # anthropic_model: claude-sonnet-4-5-20250929
+
+data:
+  text_column: text_normalised
+  id_column: uid
+
+# Reuse the cached Google Vertex/Gemini embeddings parquet:
+#   outputs/embeddings/embeddings_google_gemini_embedding_001.parquet
+# The main CLI now treats non-OpenAI model keys as load-only unless you explicitly
+# run an embeddings stage, in which case it will fail rather than recompute.
+use_models:
+  - google_gemini_embedding_001
+
+metric: euclidean
+
+# Start with the OpenAI baseline settings. After ranking the Gemini TriMAP tuning
+# output, replace these three values with the selected Gemini-optimal setting.
+trimap:
+  n_inliers: 20
+  n_outliers: 5
+  n_random: 3
+
+trimap_grid:
+  n_inliers: [5, 10, 15, 20]
+  n_outliers: [3, 5, 10, 15]
+  n_random: [2, 3, 5, 10]
+
+# Start with the OpenAI baseline settings. After ranking the Gemini HDBSCAN tuning
+# output, replace this block with the selected Gemini-optimal cluster setting.
+# Robustness comparisons for Gemini embeddings load this config and therefore use
+# these Gemini-specific HDBSCAN parameters rather than the OpenAI baseline params.
+hdbscan:
+  min_cluster_size: 5
+  min_samples: 8
+  pca_dim: 2
+  metric: manhattan
+  selection_method: leaf
+  cluster_selection_epsilon: 0.0
+
+  # Supplementary diagnostic only. This does not drive ranking by default.
+  silhouette_eval_pca_dim: 20
+  silhouette_eval_metric: null
+
+hdbscan_grid:
+  min_cluster_size: [5, 10, 15, 20, 25]
+  min_samples: [4, 8, 12, 16]
+  selection_method: [leaf, eom]
+  cluster_selection_epsilon: [0.0, 0.01, 0.1]
+  allow_single_cluster: [false]
+  metric: [euclidean, manhattan]
+  pca_dim: [null, 2, 3, 4, 5, 10, 20]
+
+summarization:
+  top_k_per_cluster: 10

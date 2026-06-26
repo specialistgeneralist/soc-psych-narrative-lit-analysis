@@ -1,0 +1,17 @@
+scope,baseline_label,variant_label,n
+baseline_representatives,0,-1,1
+baseline_representatives,0,1,2
+baseline_representatives,0,3,6
+baseline_representatives,0,4,1
+baseline_representatives,1,-1,1
+baseline_representatives,1,0,2
+baseline_representatives,1,1,7
+baseline_representatives,2,-1,1
+baseline_representatives,2,0,8
+baseline_representatives,2,1,1
+baseline_representatives,3,-1,3
+baseline_representatives,3,0,5
+baseline_representatives,3,2,1
+baseline_representatives,3,4,1
+baseline_representatives,4,-1,6
+baseline_representatives,4,2,4

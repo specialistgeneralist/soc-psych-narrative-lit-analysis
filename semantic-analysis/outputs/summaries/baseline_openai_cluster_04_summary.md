@@ -1,0 +1,11 @@
+**Proposed cluster label:** Narratives as Ideological Frameworks for Significance and Action
+
+**Synthesis paragraph:** Across these excerpts, a narrative is consistently theorized as an ideological meaning-framework that simultaneously performs explanatory and prescriptive functions: it interprets social reality and designates specific behavioral pathways as legitimate, necessary, or morally acceptable. A central mechanism is the linkage between individual psychological needs—particularly the need for personal significance, belonging, and agency—and group-sanctioned courses of action. Narratives derive their motivational force from social validation; their prescriptions must be endorsed by networks meaningful to the individual to effectively shape behavior. They can lower moral inhibitions by reframing otherwise transgressive acts as laudable. The framework is culturally embedded, applicable to both religious and secular ideological contexts.
+
+**Sub-themes:**
+- **Significance-seeking as the core psychological driver:** Narratives are explicitly theorized as responses to individuals' needs to matter, belong, and exercise agency, particularly under conditions of perceived threat or loss.
+- **Dual explanatory-prescriptive structure:** Narratives both account for circumstances (sense-making) and specify appropriate responses (action-guiding), functioning as cognitive-ideological compasses.
+- **Social network validation as a necessary condition:** The effectiveness and legitimacy of a narrative depend on endorsement and reinforcement by socially significant others, not on the narrative's content alone.
+- **Moral licensing and boundary transgression:** Narratives can reframe actions that would ordinarily violate moral norms as not only permissible but obligatory, thereby reducing guilt and enabling radical behavior.
+
+**Optional note:** The excerpts appear drawn predominantly from radicalization and significance-quest theory literature, which may limit generalizability of the construct to other narrative traditions.

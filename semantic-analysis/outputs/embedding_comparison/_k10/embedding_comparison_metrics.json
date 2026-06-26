@@ -1,0 +1,48 @@
+{
+  "records": [
+    {
+      "experiment": "embedding_representation_comparison",
+      "baseline": "openai_large_baseline",
+      "variant": "google_gemini_baseline",
+      "n_common": 129,
+      "n_baseline_total": 129,
+      "n_variant_total": 129,
+      "baseline_frac_noise_common": 0.09302325581395349,
+      "variant_frac_noise_common": 0.17829457364341086,
+      "baseline_n_clusters_common": 5,
+      "variant_n_clusters_common": 5,
+      "ari": 0.21523953636217494,
+      "ami": 0.24282743414187427,
+      "nmi": 0.291076089598141,
+      "noise_status_agreement": 0.7441860465116279,
+      "co_cluster_jaccard": 0.21208170360712733,
+      "scope": "all_points",
+      "baseline_pair_count": 1592,
+      "variant_pair_count": 1197,
+      "pair_intersection": 488,
+      "pair_union": 2301
+    },
+    {
+      "experiment": "embedding_representation_comparison",
+      "baseline": "openai_large_baseline",
+      "variant": "google_gemini_baseline",
+      "n_common": 50,
+      "n_baseline_total": 50,
+      "n_variant_total": 50,
+      "baseline_frac_noise_common": 0.0,
+      "variant_frac_noise_common": 0.24,
+      "baseline_n_clusters_common": 5,
+      "variant_n_clusters_common": 5,
+      "ari": 0.29384142062935176,
+      "ami": 0.3799750496845379,
+      "nmi": 0.47088230090664207,
+      "noise_status_agreement": 0.76,
+      "co_cluster_jaccard": 0.25705329153605017,
+      "scope": "baseline_representatives",
+      "baseline_pair_count": 225,
+      "variant_pair_count": 176,
+      "pair_intersection": 82,
+      "pair_union": 319
+    }
+  ]
+}

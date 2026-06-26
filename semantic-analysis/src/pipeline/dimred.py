@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
 from typing import Dict, Tuple
 
 import numpy as np
@@ -22,6 +24,99 @@ class TriMAPResult:
     Y: np.ndarray  # 2D embedding (n, 2)
     metrics: Dict[str, float]
     params: Dict[str, float]
+
+
+def _ensure_unique_ids(ids: list[str]) -> None:
+    seen: set[str] = set()
+    duplicates: set[str] = set()
+    for item_id in ids:
+        if item_id in seen:
+            duplicates.add(item_id)
+        seen.add(item_id)
+    if duplicates:
+        sample = ", ".join(sorted(duplicates)[:5])
+        raise ValueError(f"Dimensionality-reduction map requires unique ids; duplicate ids include: {sample}")
+
+
+def save_dimred_map(
+    path: Path,
+    Y: np.ndarray,
+    ids: list[str],
+    *,
+    model_key: str,
+    tag: str,
+    config_path: str | None = None,
+    metrics: dict[str, Any] | None = None,
+    params: dict[str, Any] | None = None,
+    note: str | None = None,
+) -> None:
+    """Persist a fixed 2D coordinate map keyed by stable item ids.
+
+    This is intentionally a coordinate map, not a reusable TriMAP estimator. It is
+    appropriate for replotting alternate cluster labels over the same topology when
+    the underlying item universe is shared.
+    """
+
+    ids = [str(item_id) for item_id in ids]
+    _ensure_unique_ids(ids)
+    if Y.ndim != 2 or Y.shape[1] != 2:
+        raise ValueError(f"Expected 2D coordinates with shape (n, 2); got {Y.shape}")
+    if Y.shape[0] != len(ids):
+        raise ValueError(f"Coordinate row count ({Y.shape[0]}) does not match id count ({len(ids)})")
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload: dict[str, Any] = {
+        "schema": "semantic-analysis.dimred-map.v1",
+        "kind": "fixed_2d_coordinate_map",
+        "ids": ids,
+        "coords": Y.astype(float).tolist(),
+        "model_key": str(model_key),
+        "tag": str(tag),
+        "config_path": config_path,
+        "metrics": metrics or {},
+        "params": params or {},
+        "note": note
+        or (
+            "This file stores fixed 2D coordinates keyed by item id. It is not a reusable TriMAP transform; "
+            "it should be used to compare alternate labels on a shared point layout."
+        ),
+    }
+    import json
+
+    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def load_dimred_map(path: Path, target_ids: list[str]) -> tuple[np.ndarray, dict[str, Any]]:
+    """Load and align a fixed coordinate map to `target_ids`.
+
+    The returned coordinate array preserves the order of `target_ids`. Extra ids in
+    the map are ignored; missing target ids are an error because the plot would be
+    partially undefined.
+    """
+
+    import json
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("schema") != "semantic-analysis.dimred-map.v1":
+        raise ValueError(f"Unsupported dimensionality-reduction map schema in {path}: {payload.get('schema')}")
+
+    map_ids = [str(item_id) for item_id in payload.get("ids", [])]
+    _ensure_unique_ids(map_ids)
+    coords = np.array(payload.get("coords", []), dtype=np.float32)
+    if coords.ndim != 2 or coords.shape[1] != 2 or coords.shape[0] != len(map_ids):
+        raise ValueError(f"Invalid coordinate payload in {path}: coords shape {coords.shape}, ids {len(map_ids)}")
+
+    target_ids = [str(item_id) for item_id in target_ids]
+    _ensure_unique_ids(target_ids)
+    by_id = {item_id: coords[i] for i, item_id in enumerate(map_ids)}
+    missing = [item_id for item_id in target_ids if item_id not in by_id]
+    if missing:
+        sample = ", ".join(missing[:5])
+        raise ValueError(f"Dimensionality-reduction map {path} is missing {len(missing)} target ids, including: {sample}")
+
+    aligned = np.vstack([by_id[item_id] for item_id in target_ids]).astype(np.float32)
+    return aligned, payload
+
 
 def run_trimap(
     cfg: PipelineConfig,

@@ -1,0 +1,2 @@
+experiment,baseline,variant,n_common,n_baseline_total,n_variant_total,baseline_frac_noise_common,variant_frac_noise_common,baseline_n_clusters_common,variant_n_clusters_common,ari,ami,nmi,noise_status_agreement,co_cluster_jaccard,embedding_model_key
+A_vector_representation,baseline,openai_small_embeddings,129,129,129,0.09302325581395349,0.08527131782945736,5,6,0.33988373887545653,0.44264711577582133,0.4843710069904666,0.8527131782945736,0.29678899082568805,small

@@ -48,12 +48,19 @@ class DataConfig:
 
 
 @dataclass
+class VisualizationConfig:
+    # Matplotlib scatter marker size for cluster plots.
+    marker_size: float = 30.0
+
+
+@dataclass
 class PipelineConfig:
     # This is the authoritative in-memory config object. Most stages accept `cfg` and read fields directly.
     seed: int = 42
     paths: Paths = None  # type: ignore
     models: ModelConfig = field(default_factory=ModelConfig)
     data: DataConfig = field(default_factory=DataConfig)
+    visualization: VisualizationConfig = field(default_factory=VisualizationConfig)
 
     # Defaults/toggles
     use_models: tuple[str, ...] = ("small", "large")
@@ -79,7 +86,7 @@ class PipelineConfig:
     hdbscan_cluster_selection_epsilon: float = 0.0
 
     # Supplementary eval metric space
-    hdbscan_silhouette_eval_pca_dim: Optional[int] = 20
+    hdbscan_silhouette_eval_pca_dim: Optional[int] = 10
     hdbscan_silhouette_eval_metric: Optional[str] = None
 
     # HDBSCAN tuning grids
@@ -168,6 +175,7 @@ def load_config(config_path: Optional[str] = None, env_path: Optional[str] = Non
     paths_cfg = _section(raw, "paths")
     models_cfg = _section(raw, "models")
     data_cfg = _section(raw, "data")
+    visualization_cfg = _section(raw, "visualization")
     trimap_cfg = _section(raw, "trimap")
     trimap_grid_cfg = _section(raw, "trimap_grid")
     hdbscan_cfg = _section(raw, "hdbscan")
@@ -194,6 +202,9 @@ def load_config(config_path: Optional[str] = None, env_path: Optional[str] = Non
         data=DataConfig(
             text_column=str(data_cfg.get("text_column", DataConfig.text_column)),
             id_column=data_cfg.get("id_column", DataConfig.id_column),
+        ),
+        visualization=VisualizationConfig(
+            marker_size=float(visualization_cfg.get("marker_size", VisualizationConfig.marker_size)),
         ),
     )
 

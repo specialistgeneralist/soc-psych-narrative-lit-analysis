@@ -1,0 +1,73 @@
+{
+  "summaries": [
+    {
+      "cluster_id": 0,
+      "n_items": 44,
+      "representative_indices": [
+        70,
+        75,
+        27,
+        100,
+        64,
+        49,
+        109,
+        2,
+        4,
+        86
+      ],
+      "summary_path": "outputs/summaries/openai_variant_2_cluster_00_summary.md"
+    },
+    {
+      "cluster_id": 1,
+      "n_items": 16,
+      "representative_indices": [
+        89,
+        88,
+        77,
+        84,
+        36,
+        12,
+        125,
+        37,
+        6,
+        126
+      ],
+      "summary_path": "outputs/summaries/openai_variant_2_cluster_01_summary.md"
+    },
+    {
+      "cluster_id": 2,
+      "n_items": 13,
+      "representative_indices": [
+        99,
+        68,
+        60,
+        65,
+        104,
+        87,
+        74,
+        101,
+        102,
+        16
+      ],
+      "summary_path": "outputs/summaries/openai_variant_2_cluster_02_summary.md"
+    },
+    {
+      "cluster_id": 3,
+      "n_items": 40,
+      "representative_indices": [
+        13,
+        95,
+        58,
+        41,
+        22,
+        21,
+        96,
+        59,
+        34,
+        46
+      ],
+      "summary_path": "outputs/summaries/openai_variant_2_cluster_03_summary.md"
+    }
+  ],
+  "meta_summary_path": "outputs/summaries/openai_variant_2_meta_summary.md"
+}

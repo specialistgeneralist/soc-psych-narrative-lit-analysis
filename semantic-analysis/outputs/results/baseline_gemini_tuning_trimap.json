@@ -1,0 +1,388 @@
+{
+  "records": [
+    {
+      "n_inliers": 5,
+      "n_outliers": 3,
+      "n_random": 2,
+      "trustworthiness@10": 0.8193969197145101
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 3,
+      "n_random": 3,
+      "trustworthiness@10": 0.8438479663968855
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 3,
+      "n_random": 5,
+      "trustworthiness@10": 0.8527541577024212
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 3,
+      "n_random": 10,
+      "trustworthiness@10": 0.8422497694908309
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 5,
+      "n_random": 2,
+      "trustworthiness@10": 0.8435474507393368
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 5,
+      "n_random": 3,
+      "trustworthiness@10": 0.8222176689546836
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 5,
+      "n_random": 5,
+      "trustworthiness@10": 0.8456169108356384
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 5,
+      "n_random": 10,
+      "trustworthiness@10": 0.8532527404978998
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 10,
+      "n_random": 2,
+      "trustworthiness@10": 0.8390192261721818
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 10,
+      "n_random": 3,
+      "trustworthiness@10": 0.8483010620496534
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 10,
+      "n_random": 5,
+      "trustworthiness@10": 0.8332001502578288
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 10,
+      "n_random": 10,
+      "trustworthiness@10": 0.8513608578356042
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 15,
+      "n_random": 2,
+      "trustworthiness@10": 0.847781989550251
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 15,
+      "n_random": 3,
+      "trustworthiness@10": 0.8509374039545129
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 15,
+      "n_random": 5,
+      "trustworthiness@10": 0.8460471946180378
+    },
+    {
+      "n_inliers": 5,
+      "n_outliers": 15,
+      "n_random": 10,
+      "trustworthiness@10": 0.8424683263326845
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 3,
+      "n_random": 2,
+      "trustworthiness@10": 0.8371683229177338
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 3,
+      "n_random": 3,
+      "trustworthiness@10": 0.8522487450056346
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 3,
+      "n_random": 5,
+      "trustworthiness@10": 0.8563125362838507
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 3,
+      "n_random": 10,
+      "trustworthiness@10": 0.860526585390841
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 5,
+      "n_random": 2,
+      "trustworthiness@10": 0.8558481029949118
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 5,
+      "n_random": 3,
+      "trustworthiness@10": 0.8630468189734658
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 5,
+      "n_random": 5,
+      "trustworthiness@10": 0.8623365092374415
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 5,
+      "n_random": 10,
+      "trustworthiness@10": 0.866632517160127
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 10,
+      "n_random": 2,
+      "trustworthiness@10": 0.8649045521292218
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 10,
+      "n_random": 3,
+      "trustworthiness@10": 0.8458627872827238
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 10,
+      "n_random": 5,
+      "trustworthiness@10": 0.8640986237748864
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 10,
+      "n_random": 10,
+      "trustworthiness@10": 0.8575282587166615
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 15,
+      "n_random": 2,
+      "trustworthiness@10": 0.8663251716012703
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 15,
+      "n_random": 3,
+      "trustworthiness@10": 0.8656421814704778
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 15,
+      "n_random": 5,
+      "trustworthiness@10": 0.8682785233753372
+    },
+    {
+      "n_inliers": 10,
+      "n_outliers": 15,
+      "n_random": 10,
+      "trustworthiness@10": 0.8685243998224226
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 3,
+      "n_random": 2,
+      "trustworthiness@10": 0.8523785131304853
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 3,
+      "n_random": 3,
+      "trustworthiness@10": 0.8613530034491002
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 3,
+      "n_random": 5,
+      "trustworthiness@10": 0.8610593176928594
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 3,
+      "n_random": 10,
+      "trustworthiness@10": 0.8562169176655398
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 5,
+      "n_random": 2,
+      "trustworthiness@10": 0.868667827749889
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 5,
+      "n_random": 3,
+      "trustworthiness@10": 0.8711402520233582
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 5,
+      "n_random": 5,
+      "trustworthiness@10": 0.8622408906191306
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 5,
+      "n_random": 10,
+      "trustworthiness@10": 0.8642557115049687
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 10,
+      "n_random": 2,
+      "trustworthiness@10": 0.8695762046238432
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 10,
+      "n_random": 3,
+      "trustworthiness@10": 0.8686473380459653
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 10,
+      "n_random": 5,
+      "trustworthiness@10": 0.8725677013967148
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 10,
+      "n_random": 10,
+      "trustworthiness@10": 0.8637024894990267
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 15,
+      "n_random": 2,
+      "trustworthiness@10": 0.8713451490625961
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 15,
+      "n_random": 3,
+      "trustworthiness@10": 0.8739541713622239
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 15,
+      "n_random": 5,
+      "trustworthiness@10": 0.8679848376190964
+    },
+    {
+      "n_inliers": 15,
+      "n_outliers": 15,
+      "n_random": 10,
+      "trustworthiness@10": 0.866086125055493
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 3,
+      "n_random": 2,
+      "trustworthiness@10": 0.8529453949390431
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 3,
+      "n_random": 3,
+      "trustworthiness@10": 0.8610729774954752
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 3,
+      "n_random": 5,
+      "trustworthiness@10": 0.8559915309223782
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 3,
+      "n_random": 10,
+      "trustworthiness@10": 0.8563398558890825
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 5,
+      "n_random": 2,
+      "trustworthiness@10": 0.8666120274562032
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 5,
+      "n_random": 3,
+      "trustworthiness@10": 0.8607656319366185
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 5,
+      "n_random": 5,
+      "trustworthiness@10": 0.8678960489020934
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 5,
+      "n_random": 10,
+      "trustworthiness@10": 0.8718369019567667
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 10,
+      "n_random": 2,
+      "trustworthiness@10": 0.8683263326844928
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 10,
+      "n_random": 3,
+      "trustworthiness@10": 0.8736946351125227
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 10,
+      "n_random": 5,
+      "trustworthiness@10": 0.8649933408462248
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 10,
+      "n_random": 10,
+      "trustworthiness@10": 0.8583136973670731
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 15,
+      "n_random": 2,
+      "trustworthiness@10": 0.8680258170269439
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 15,
+      "n_random": 3,
+      "trustworthiness@10": 0.8628897312433835
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 15,
+      "n_random": 5,
+      "trustworthiness@10": 0.8662910220947307
+    },
+    {
+      "n_inliers": 20,
+      "n_outliers": 15,
+      "n_random": 10,
+      "trustworthiness@10": 0.8628214322303043
+    }
+  ]
+}

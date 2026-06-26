@@ -1,0 +1,14 @@
+{
+  "provider": "anthropic",
+  "model": "claude-opus-4-8",
+  "tag": "label_anthropic_opus48",
+  "n_summaries": 5,
+  "summary_paths": [
+    "outputs/robustness/labelling_variants/label_anthropic_opus48_cluster_00_summary.md",
+    "outputs/robustness/labelling_variants/label_anthropic_opus48_cluster_01_summary.md",
+    "outputs/robustness/labelling_variants/label_anthropic_opus48_cluster_02_summary.md",
+    "outputs/robustness/labelling_variants/label_anthropic_opus48_cluster_03_summary.md",
+    "outputs/robustness/labelling_variants/label_anthropic_opus48_cluster_04_summary.md"
+  ],
+  "meta_summary_path": "outputs/robustness/labelling_variants/label_anthropic_opus48_meta_summary.md"
+}

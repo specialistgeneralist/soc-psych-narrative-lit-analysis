@@ -10,7 +10,7 @@ import pandas as pd
 from src.pipeline.config import PipelineConfig, load_config
 from src.pipeline.utils import ensure_dirs, package_versions, save_json, set_global_seed
 from src.pipeline.embeddings import compute_and_store_embeddings, load_embeddings
-from src.pipeline.dimred import run_trimap
+from src.pipeline.dimred import load_dimred_map, run_trimap, save_dimred_map
 from src.pipeline.clustering import run_hdbscan
 from src.pipeline.parameter_search import grid_search_hdbscan, grid_search_trimap
 from src.pipeline.visualize import plot_embedding
@@ -45,11 +45,23 @@ def stage_embeddings(cfg: PipelineConfig, df: pd.DataFrame, which: List[str]) ->
     return paths
 
 
-def stage_dimred(cfg: PipelineConfig, df_emb: pd.DataFrame) -> Dict:
+def _embedding_ids(df_emb: pd.DataFrame) -> List[str]:
+    if "id" not in df_emb.columns:
+        raise ValueError("Embeddings parquet must contain an 'id' column for dimensionality-reduction map alignment.")
+    ids = df_emb["id"].astype(str).tolist()
+    if len(ids) != len(set(ids)):
+        raise ValueError("Embeddings parquet contains duplicate ids; fixed dimensionality-reduction maps require unique ids.")
+    return ids
+
+
+def stage_dimred(cfg: PipelineConfig, df_emb: pd.DataFrame, *, use_dimred_map: Path | None = None) -> Dict:
     # TriMAP expects an array of vectors; we store unit-normalized vectors in `vector_unit`.
+    if use_dimred_map is not None:
+        Y, map_meta = load_dimred_map(use_dimred_map, _embedding_ids(df_emb))
+        return {"Y": Y, "metrics": map_meta.get("metrics", {}), "params": map_meta.get("params", {}), "map_meta": map_meta}
     X_unit = np.array(df_emb["vector_unit"].tolist(), dtype=np.float32)
     res = run_trimap(cfg, X_unit)
-    return {"Y": res.Y, "metrics": res.metrics, "params": res.params}
+    return {"Y": res.Y, "metrics": res.metrics, "params": res.params, "map_meta": None}
 
 
 def stage_clustering(cfg: PipelineConfig, df_emb: pd.DataFrame) -> Dict:
@@ -105,7 +117,10 @@ def main():
         "--models",
         type=str,
         default=None,
-        help="Override which embeddings to compute/load: small,large or both. Defaults to config `use_models`.",
+        help=(
+            "Override which embeddings to compute/load, comma-separated. OpenAI keys small/large can be computed; "
+            "other keys are treated as cached parquet keys, e.g. google_gemini_embedding_001. Defaults to config `use_models`."
+        ),
     )
 
     parser.add_argument(
@@ -113,7 +128,7 @@ def main():
         type=str,
         default="all",
         help=(
-            "Stages to run: embeddings,dimred,cluster,summarize,visualize (or 'visualise'),all. "
+            "Stages to run: embeddings,dimred,cluster,summarize,visualize (or 'visualise'),none,all. "
             "Use 'visualize' to render plots from existing coords/labels without recomputing."
         ),
     )
@@ -127,14 +142,43 @@ def main():
         help="Optional override for TriMAP optimization iterations. Library default is 400; final runs may use e.g. 1000.",
     )
     parser.add_argument(
-        "--vis-percentile",
-        type=float,
+        "--save-dimred-map",
+        nargs="?",
+        const="__default__",
         default=None,
         help=(
-            "Optional contour mass percentile for visualization boundaries. "
-            "If set, draw KDE contour boundaries enclosing this fraction of cluster mass "
-            "instead of convex hulls. Accepts either 0-1 (e.g. 0.9) or 0-100 (e.g. 90)."
+            "Save the 2D dimensionality-reduction coordinate map keyed by item id. "
+            "If no path is supplied, writes outputs/results/{tag}_dimred_map_{model_key}.json."
         ),
+    )
+    parser.add_argument(
+        "--use-dimred-map",
+        type=str,
+        default=None,
+        help="Load an existing fixed 2D coordinate map instead of running TriMAP, aligning coordinates by item id.",
+    )
+    parser.add_argument(
+        "--vis-percentile",
+        type=float,
+        default=75.0,
+        help=(
+            "Density contour mass percentile for visualization shading. "
+            "Accepts either 0-1 (e.g. 0.75) or 0-100 (e.g. 75). "
+            "Only applies when --vis-boundary-style=density."
+        ),
+    )
+    parser.add_argument(
+        "--vis-boundary-style",
+        type=str,
+        choices=["density", "hull", "none"],
+        default="density",
+        help="Cluster overlay style: shaded KDE density region (default), legacy convex hull, or none.",
+    )
+    parser.add_argument(
+        "--vis-marker-size",
+        type=float,
+        default=None,
+        help="Override visualization scatter marker size. Defaults to config visualization.marker_size.",
     )
     parser.add_argument("--tag", type=str, default="run", help="Tag for output filenames, default to config file if exists")
 
@@ -172,11 +216,12 @@ def main():
     print(f" --> Loading input data from {cfg.paths.input_tsv} with text column '{cfg.data.text_column}' and id column '{cfg.data.id_column}'")
     df_input = read_input_tsv(cfg.paths.input_tsv, cfg.data.text_column)
 
-    # Determine which embedding models to use. CLI restricts to "small"/"large" to keep filenames consistent.
+    # Determine which embedding keys to use. OpenAI keys ("small"/"large") can be computed;
+    # provider-specific keys such as "google_gemini_embedding_001" are load-only cached parquet keys.
     if args.models:
-        selected_models = [m.strip() for m in args.models.split(",") if m.strip() in ("small", "large")]
+        selected_models = [m.strip() for m in args.models.split(",") if m.strip()]
     else:
-        selected_models = [m for m in cfg.use_models if m in ("small", "large")]
+        selected_models = [str(m) for m in cfg.use_models if str(m).strip()]
     if not selected_models:
         selected_models = ["small"]
 
@@ -185,7 +230,7 @@ def main():
     # - as part of the normal dimred+cluster run, or
     # - explicitly via `--do visualize` (read existing artifacts and plot).
     run_embeddings = run_dimred = run_cluster = run_summarize = run_visualize = False
-    if args.do == "all":
+    if args.do == "all" and not (args.tune_trimap or args.tune_hdbscan):
         run_embeddings = run_dimred = run_cluster = run_summarize = True
     else:
         stages = {s.strip().lower() for s in args.do.split(",")}
@@ -194,6 +239,7 @@ def main():
         run_cluster = "cluster" in stages
         run_summarize = "summarize" in stages
         run_visualize = ("visualize" in stages) or ("visualise" in stages)
+        # "none" intentionally leaves all stage flags false; tuning switches still load cached embeddings below.
 
     # Record config and versions to make results self-describing/reproducible.
     meta: Dict = {
@@ -216,6 +262,8 @@ def main():
             ]
         ),
         "tag": args.tag,
+        "save_dimred_map": args.save_dimred_map,
+        "use_dimred_map": args.use_dimred_map,
     }
 
     results_dir = cfg.paths.results_dir
@@ -225,6 +273,14 @@ def main():
     df_emb: Optional[pd.DataFrame] = None
 
     if run_embeddings:
+        unsupported_compute_keys = [key for key in selected_models if key not in ("small", "large")]
+        if unsupported_compute_keys:
+            raise ValueError(
+                "The embeddings stage can only compute OpenAI keys 'small' and 'large'. "
+                f"These keys are load-only and must already exist as parquet files: {unsupported_compute_keys}. "
+                "For cached embeddings, omit the embeddings stage, e.g. use --do none with --tune-trimap/--tune-hdbscan, "
+                "or use --do dimred,cluster,visualize for a full cached run."
+            )
         print(f" --> Computing/loading embeddings for models: {selected_models}")
         emb_paths = stage_embeddings(cfg, df_input, which=selected_models)
         save_json({k: str(v) for k, v in emb_paths.items()}, results_dir / f"{args.tag}_embedding_paths.json")
@@ -234,8 +290,9 @@ def main():
     chosen_key = "large" if "large" in selected_models else selected_models[0]
 
     # If we didn't (re)compute embeddings in this run, try to locate an existing parquet on disk.
-    # This supports workflows like: run embeddings once, then iterate on dimred/cluster/visualize.
-    if not emb_paths and (run_dimred or run_cluster or run_summarize or run_visualize):
+    # This supports workflows like: run embeddings once, then iterate on dimred/cluster/visualize/tuning.
+    needs_embeddings = run_dimred or run_cluster or run_summarize or run_visualize or args.tune_trimap or args.tune_hdbscan
+    if not emb_paths and needs_embeddings:
         candidate = cfg.paths.embeddings_dir / f"embeddings_{chosen_key}.parquet"
         if candidate.exists():
             emb_paths[chosen_key] = candidate
@@ -260,34 +317,95 @@ def main():
                             emb_paths[chosen_key] = resolved_path
                 if not emb_paths:
                     raise FileNotFoundError(
-                        "No embeddings found. Run with --do embeddings or ensure an embeddings parquet exists."
+                        "No embeddings found. Run with --do embeddings for OpenAI keys, or ensure the cached embeddings parquet "
+                        f"exists at {candidate}. For provider-specific keys such as Google Vertex/Gemini, embeddings are "
+                        "intentionally load-only in this CLI path."
                     )
 
     df_emb = load_embeddings(emb_paths[chosen_key])
 
     # --- Dimensionality reduction (TriMAP) ---
     Y: Optional[np.ndarray] = None
+    dim_res: Optional[Dict] = None
+    dimred_map_meta: Optional[Dict] = None
+    dimred_map_path = Path(args.use_dimred_map) if args.use_dimred_map else None
     if run_dimred:
-        dim_res = stage_dimred(cfg, df_emb)
+        dim_res = stage_dimred(cfg, df_emb, use_dimred_map=dimred_map_path)
         Y = dim_res["Y"]
-        save_json({"metrics": dim_res["metrics"], "params": dim_res["params"]}, results_dir / f"{args.tag}_trimap.json")
+        dimred_map_meta = dim_res.get("map_meta")
+        if dimred_map_meta is not None:
+            map_model_key = str(dimred_map_meta.get("model_key", ""))
+            if map_model_key and map_model_key != chosen_key:
+                print(
+                    "WARNING: using fixed dimensionality-reduction coordinates saved for model key "
+                    f"'{map_model_key}' with current model key '{chosen_key}'. This is useful for visual alignment, "
+                    "but it is not a projection of the current embedding topology."
+                )
+            save_json(
+                {
+                    "source": "fixed_dimred_map",
+                    "map_path": str(dimred_map_path),
+                    "map_model_key": dimred_map_meta.get("model_key"),
+                    "map_tag": dimred_map_meta.get("tag"),
+                    "metrics": dim_res["metrics"],
+                    "params": dim_res["params"],
+                    "note": (
+                        "Coordinates were loaded from a fixed item-id map rather than recomputed. "
+                        "Use this for comparing alternate labels on a shared layout; cross-embedding use is visual alignment only."
+                    ),
+                },
+                results_dir / f"{args.tag}_trimap.json",
+            )
+        else:
+            save_json({"source": "trimap", "metrics": dim_res["metrics"], "params": dim_res["params"]}, results_dir / f"{args.tag}_trimap.json")
         coords_path = results_dir / f"{args.tag}_coords_{chosen_key}.npy"
         np.save(coords_path, Y)
     elif run_visualize:
-        # Read existing coordinates from disk, trying the other model key if the preferred one is missing.
-        coords_path = results_dir / f"{args.tag}_coords_{chosen_key}.npy"
-        if not coords_path.exists():
-            for key in (["large", "small"] if chosen_key == "small" else ["large", "small"]):
-                alt = results_dir / f"{args.tag}_coords_{key}.npy"
-                if alt.exists():
-                    chosen_key = key
-                    coords_path = alt
-                    break
-        if not coords_path.exists():
-            raise FileNotFoundError(
-                f"No existing TriMAP coords found for tag '{args.tag}'. Expected {results_dir / f'{args.tag}_coords_{{large|small}}.npy'}"
-            )
-        Y = np.load(coords_path)
+        if dimred_map_path is not None:
+            Y, dimred_map_meta = load_dimred_map(dimred_map_path, _embedding_ids(df_emb))
+            map_model_key = str(dimred_map_meta.get("model_key", ""))
+            if map_model_key and map_model_key != chosen_key:
+                print(
+                    "WARNING: using fixed dimensionality-reduction coordinates saved for model key "
+                    f"'{map_model_key}' with current model key '{chosen_key}'. This is useful for visual alignment, "
+                    "but it is not a projection of the current embedding topology."
+                )
+        else:
+            # Read existing coordinates from disk, trying the other model key if the preferred one is missing.
+            coords_path = results_dir / f"{args.tag}_coords_{chosen_key}.npy"
+            if not coords_path.exists():
+                for key in (["large", "small"] if chosen_key == "small" else ["large", "small"]):
+                    alt = results_dir / f"{args.tag}_coords_{key}.npy"
+                    if alt.exists():
+                        chosen_key = key
+                        coords_path = alt
+                        break
+            if not coords_path.exists():
+                raise FileNotFoundError(
+                    f"No existing TriMAP coords found for tag '{args.tag}'. Expected {results_dir / f'{args.tag}_coords_{{large|small}}.npy'}"
+                )
+            Y = np.load(coords_path)
+
+    if args.save_dimred_map is not None:
+        if Y is None:
+            raise RuntimeError("--save-dimred-map requires dimensionality-reduction coordinates. Include --do dimred or --do visualize.")
+        if args.save_dimred_map == "__default__":
+            save_map_path = results_dir / f"{args.tag}_dimred_map_{chosen_key}.json"
+        else:
+            save_map_path = Path(args.save_dimred_map)
+        source_metrics = dim_res.get("metrics", {}) if dim_res else {}
+        source_params = dim_res.get("params", {}) if dim_res else {}
+        save_dimred_map(
+            save_map_path,
+            Y,
+            _embedding_ids(df_emb),
+            model_key=chosen_key,
+            tag=args.tag,
+            config_path=args.config,
+            metrics=source_metrics,
+            params=source_params,
+        )
+        print(f" --> Saved fixed dimensionality-reduction coordinate map to {save_map_path}")
 
     # --- Clustering (HDBSCAN) ---
     labels: Optional[np.ndarray] = None
@@ -327,7 +445,9 @@ def main():
             labels,
             ids,
             cfg.paths.plots_dir / f"{args.tag}_trimap_hdbscan.png",
-            contour_mass_percentile=args.vis_percentile,
+            boundary_style=args.vis_boundary_style,
+            density_percentile=args.vis_percentile,
+            marker_size=args.vis_marker_size,
         )
 
     # Default behavior: if we ran both dimred and clustering, plot once at the end.
@@ -339,7 +459,9 @@ def main():
             labels,
             ids,
             cfg.paths.plots_dir / f"{args.tag}_trimap_hdbscan.png",
-            contour_mass_percentile=args.vis_percentile,
+            boundary_style=args.vis_boundary_style,
+            density_percentile=args.vis_percentile,
+            marker_size=args.vis_marker_size,
         )
 
     # --- Summarization (LLM synthesis) ---

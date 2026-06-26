@@ -1,0 +1,10 @@
+**Proposed cluster label:** Narratives as Ideological Frameworks for Significance-Seeking and Action Justification
+
+**Synthesis paragraph:** Across these excerpts, a consistent theoretical construct emerges: narratives are socially validated, ideological meaning-making frameworks that connect individual psychological needs—particularly the need for personal significance—to collective belief systems and prescribed behavioral pathways. They function simultaneously as interpretive structures (explaining grievances, attributing causality, defining ingroup/outgroup boundaries) and as prescriptive structures (legitimizing specific actions, including violence, as appropriate means to valued ends). Crucially, narrative adoption is contingent on validation by a reference group, embedding individual motivation within collective social dynamics. The construct is explicitly positioned as distinct from purely psychological or social factors, representing the ideological dimension that bridges personal motivation and collective action.
+
+**Sub-themes:**
+- **Significance Quest Integration:** Narratives are theorized as responses to psychological deficits or opportunities, offering group-validated pathways to significance, worth, or recognition
+- **Moral Legitimation of Action:** Narratives render otherwise unacceptable behaviors—including extreme violence—instrumentally and morally acceptable by framing them as necessary means to collective goals
+- **Ingroup/Outgroup Structuring:** Narratives organize social reality through value-laden differentiation between groups, identifying culpable parties and directing grievance-based responses
+
+**Optional note:** The excerpts appear to draw predominantly from a single theoretical tradition (Significance Quest Theory / 3N model), which may limit representativeness across broader narrative research.

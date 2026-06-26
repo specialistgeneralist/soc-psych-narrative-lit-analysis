@@ -1,0 +1,28 @@
+{
+  "metrics": {
+    "n_clusters": 5.0,
+    "frac_noise": 0.09302325581395349,
+    "silhouette": 0.6667482294124246,
+    "silhouette_eval": 0.063755100179576,
+    "silhouette_eval_pca_dim": 20.0
+  },
+  "params": {
+    "min_cluster_size": 10.0,
+    "min_samples": 4.0,
+    "metric": "manhattan",
+    "cluster_selection_method": "leaf",
+    "cluster_selection_epsilon": 0.0,
+    "allow_single_cluster": 0.0,
+    "p": -1.0,
+    "n_jobs": -1.0,
+    "pca_dim": 2.0,
+    "silhouette_eval_metric": "manhattan"
+  },
+  "tag": "robust_seed_7",
+  "model_key": "large",
+  "seed": 7,
+  "extra_meta": {
+    "source_of_variation": "seed",
+    "seed": 7
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "metrics": {
+    "trustworthiness@10": 0.8743161561315439
+  },
+  "params": {
+    "n_inliers": 10,
+    "n_outliers": 3,
+    "n_random": 3,
+    "n_iters": 1000,
+    "metric": "euclidean",
+    "seed": 42
+  }
+}

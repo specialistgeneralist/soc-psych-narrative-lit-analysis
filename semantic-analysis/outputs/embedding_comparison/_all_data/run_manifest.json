@@ -1,0 +1,216 @@
+{
+  "spec": {
+    "baseline_config": "configs/baseline_openai.yaml",
+    "baseline_tag": "baseline_openai",
+    "baseline_model_key": "large",
+    "baseline_name": "openai_large_baseline",
+    "variant_config": "configs/baseline_gemini.yaml",
+    "variant_tag": "baseline_gemini",
+    "variant_model_key": "google_gemini_embedding_001",
+    "variant_name": "google_gemini_baseline",
+    "output_dir": "outputs/embedding_comparison",
+    "reuse_existing_only": true,
+    "representative_top_k_per_cluster": null,
+    "representative_metric": "cosine",
+    "include_noise_representatives": false,
+    "write_representative_text": true
+  },
+  "baseline_config_effective": {
+    "seed": 42,
+    "paths": {
+      "input_tsv": "data/04112025_conceptualised_articles_103_cleaned_normalised_nocounts.csv",
+      "output_dir": "outputs",
+      "embeddings_dir": "outputs/embeddings",
+      "plots_dir": "outputs/plots",
+      "results_dir": "outputs/results",
+      "summaries_dir": "outputs/summaries",
+      "cache_dir": "outputs/cache"
+    },
+    "models": {
+      "openai_small": "text-embedding-3-small",
+      "openai_large": "text-embedding-3-large",
+      "anthropic_model": "claude-sonnet-4-6"
+    },
+    "data": {
+      "text_column": "text_normalised",
+      "id_column": "uid"
+    },
+    "use_models": [
+      "large"
+    ],
+    "metric": "euclidean",
+    "trimap_n_inliers": 10,
+    "trimap_n_outliers": 10,
+    "trimap_n_random": 2,
+    "trimap_n_iters": 400,
+    "trimap_grid_n_inliers": [
+      5,
+      10,
+      15,
+      20
+    ],
+    "trimap_grid_n_outliers": [
+      3,
+      5,
+      10,
+      15
+    ],
+    "trimap_grid_n_random": [
+      2,
+      3,
+      5,
+      10
+    ],
+    "hdbscan_min_cluster_size": 10,
+    "hdbscan_min_samples": 4,
+    "hdbscan_pca_dim": 2,
+    "hdbscan_metric": "manhattan",
+    "hdbscan_selection_method": "leaf",
+    "hdbscan_cluster_selection_epsilon": 0.0,
+    "hdbscan_silhouette_eval_pca_dim": 20,
+    "hdbscan_silhouette_eval_metric": null,
+    "hdbscan_grid_min_cluster_size": [
+      5,
+      10,
+      15,
+      20,
+      25
+    ],
+    "hdbscan_grid_min_samples": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "hdbscan_grid_selection_method": [
+      "leaf",
+      "eom"
+    ],
+    "hdbscan_grid_selection_epsilon": [
+      0.0,
+      0.01,
+      0.1
+    ],
+    "hdbscan_grid_allow_single_cluster": [
+      false
+    ],
+    "hdbscan_grid_metric": [
+      "euclidean",
+      "manhattan"
+    ],
+    "hdbscan_grid_pca_dim": [
+      null,
+      2,
+      3,
+      4,
+      5,
+      10,
+      20
+    ],
+    "top_k_per_cluster": 10
+  },
+  "variant_config_effective": {
+    "seed": 42,
+    "paths": {
+      "input_tsv": "data/04112025_conceptualised_articles_103_cleaned_normalised_nocounts.csv",
+      "output_dir": "outputs",
+      "embeddings_dir": "outputs/embeddings",
+      "plots_dir": "outputs/plots",
+      "results_dir": "outputs/results",
+      "summaries_dir": "outputs/summaries",
+      "cache_dir": "outputs/cache"
+    },
+    "models": {
+      "openai_small": "text-embedding-3-small",
+      "openai_large": "text-embedding-3-large",
+      "anthropic_model": "claude-sonnet-4-6"
+    },
+    "data": {
+      "text_column": "text_normalised",
+      "id_column": "uid"
+    },
+    "use_models": [
+      "google_gemini_embedding_001"
+    ],
+    "metric": "euclidean",
+    "trimap_n_inliers": 20,
+    "trimap_n_outliers": 5,
+    "trimap_n_random": 3,
+    "trimap_n_iters": 400,
+    "trimap_grid_n_inliers": [
+      5,
+      10,
+      15,
+      20
+    ],
+    "trimap_grid_n_outliers": [
+      3,
+      5,
+      10,
+      15
+    ],
+    "trimap_grid_n_random": [
+      2,
+      3,
+      5,
+      10
+    ],
+    "hdbscan_min_cluster_size": 5,
+    "hdbscan_min_samples": 8,
+    "hdbscan_pca_dim": 2,
+    "hdbscan_metric": "manhattan",
+    "hdbscan_selection_method": "leaf",
+    "hdbscan_cluster_selection_epsilon": 0.0,
+    "hdbscan_silhouette_eval_pca_dim": 20,
+    "hdbscan_silhouette_eval_metric": null,
+    "hdbscan_grid_min_cluster_size": [
+      5,
+      10,
+      15,
+      20,
+      25
+    ],
+    "hdbscan_grid_min_samples": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "hdbscan_grid_selection_method": [
+      "leaf",
+      "eom"
+    ],
+    "hdbscan_grid_selection_epsilon": [
+      0.0,
+      0.01,
+      0.1
+    ],
+    "hdbscan_grid_allow_single_cluster": [
+      false
+    ],
+    "hdbscan_grid_metric": [
+      "euclidean",
+      "manhattan"
+    ],
+    "hdbscan_grid_pca_dim": [
+      null,
+      2,
+      3,
+      4,
+      5,
+      10,
+      20
+    ],
+    "top_k_per_cluster": 10
+  },
+  "python": "3.11.14 (main, Oct 11 2025, 02:11:58) [Clang 17.0.0 (clang-1700.0.13.5)]",
+  "platform": "macOS-15.6.1-arm64-arm-64bit",
+  "git_commit": "a655d11b7a79e7177afe189967e84dba93e621fc",
+  "package_versions": {
+    "pandas": "3.0.1",
+    "numpy": "2.4.3",
+    "scikit-learn": "1.8.0",
+    "pyarrow": "23.0.1",
+    "pyyaml": "6.0.3"
+  }
+}

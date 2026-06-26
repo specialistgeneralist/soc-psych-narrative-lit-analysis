@@ -1,4 +1,14 @@
-# 'Narrative' Definition Analysis Pipeline
+# Analysing Narrative Definitions in Sematic Space
+
+This repository contains replication code to produce results and figures supporting the paper:
+
+📄 "What's the Story? A Scoping Review of the Concept of Narratives in Psychological
+Studies of Ideological Extremism"
+
+By Silas Ellery, Emma Thomas, Lisette Yip, Simon Angus, Winnifred Louis, Mengbin Ye, Ryan
+Balzan
+
+## Overview
 
 This repository implements a pipeline for analyzing a large number of definitions of 'narrative' in high dimensional embedding space, leveraging encoder transformer models. The goal is to identify clusters of similar definitions and synthesize (with generative transformer models)representative summaries for each cluster, as well as meta-summaries across clusters.
 
@@ -56,7 +66,7 @@ Create and activate a virtual environment (example with Python 3.11), then insta
 
 - `ANTHROPIC_API_KEY`
 
-The code loads environment variables via `python-dotenv` (see `src/pipeline/config.py`). Do not commit `.env`.
+The code loads environment variables via `python-dotenv` (see `src/pipeline/config.py`). Do not commit/share your `.env`.
 
 ## Input data
 
@@ -68,7 +78,7 @@ You need at least a text column, and optionally an id column:
 
 - ID column: `uid` by default (optional; if missing, row indices are used)
 
-By default, `src/configs/baseline.yaml` points at `../../data/{...}.tsv`. Confirm the path and column names in the config before running. 
+By default, `src/configs/baseline_openai.yaml` points at `../../data/{...}.tsv`. Confirm the path and column names in the config before running. 
 
 ## Quickstart
 
@@ -78,41 +88,49 @@ After creating `.env`, run an end-to-end pipeline:
 
 Notes:
 
-- If you prefer to use the configs in `configs/`, pass them explicitly, e.g. `--config configs/baseline.yaml`.
+- If you prefer to use the configs in `configs/`, pass them explicitly, e.g. `--config configs/baseline_openai.yaml`.
 
 - Outputs go to `outputs/` by default (see YAML `paths:`).
 
-- You can optionally pass a `--tag` argument to add a custom tag to output filenames (e.g. `--tag test_run`), which can help keep outputs organized across runs. By default, if no tag is provided, then the stem of the config file is used as the tag (e.g. `baseline` for `configs/baseline.yaml`).
+- You can optionally pass a `--tag` argument to add a custom tag to output filenames (e.g. `--tag test_run`), which can help keep outputs organized across runs. By default, if no tag is provided, then the stem of the config file is used as the tag (e.g. `baseline_openai` for `configs/baseline_openai.yaml`).
 
 ## Running individual stages
 
-Compute embeddings only (large model):
+Compute embeddings only (large model), NOTE: invokes OpenAI embedding calls:
 
-`python -m src.main --config src/configs/baseline.yaml --do embeddings --models large --tag large_only`
+`python -m src.main --config configs/baseline_openai.yaml --do embeddings --models large --tag large_only`
 
 Run TriMAP + HDBSCAN given existing embeddings:
 
-`python -m src.main --config src/configs/baseline.yaml --do dimred,cluster vis_only`
+`python -m src.main --config configs/baseline_openai.yaml --do dimred,cluster`
+
+You can optionally save a TriMap xy coordinate set (to freeze positions of items in low-D space for clustering comparison etc.) by running:
+
+`python -m src.main --do dimred --config configs/baseline_openai.yaml --save-dimred-map`
 
 Plot from existing coords/labels without recomputing:
 
-`python -m src.main --config src/configs/baseline.yaml --do visualize --tag demo`
+`python -m src.main --config configs/baseline_openai.yaml --do visualize --tag demo`
 
-Summarize clusters (requires labels from clustering):
+Plot with existing XY positions saved previously:
 
-`python -m src.main --config src/configs/baseline.yaml --do summarize --tag demo`
+`python -m src.main --do visualise --config configs/baseline_openai.yaml --use-dimred-map outputs/results/baseline_openai_dimred_map_large.json`
 
-## Tuning
+Summarize clusters (requires labels from clustering), NOTE: invokes Anthropic (by default) LLM model calls:
+
+`python -m src.main --config configs/baseline_openai.yaml --do summarize --tag demo`
+
+## Hyper-Parameter Tuning
 
 We assume in the following embeddings already exist.
 
 Grid-search TriMAP parameters:
 
-`python -m src.main --config src/configs/baseline.yaml --tune-trimap --tag tune_tri`
+`python -m src.main --config configs/baseline_openai.yaml --tune-trimap`
 
 Grid-search HDBSCAN parameters:
 
-`python -m src.main --config src/configs/baseline.yaml --tune-hdbscan --tag tune_hdb`
+`python -m src.main --config configs/baseline.yaml --tune-hdbscan`
 
 Results are saved under `outputs/results/*tuning*.json`.
 
@@ -124,7 +142,7 @@ After a tuning run, you can rank the outcomes in a JSON results file with:
 
 `python src/tools/rank_hdbscan_results.py outputs/results/<tag>_tuning_hdbscan.json --top 20`
 
-Ranking for HDBSCAN by default is based on Silhouette scores only. You can optionally use a combined metric between Silhouette scores and fraction of points labelled as noise (e.g., `silhouette - noise_fraction`), which may be preferable in some cases to avoid solutions that label most points as noise. By default, the weighting is 0.5 for the noise-fraction, but you can adjust this with the `--noise-weight` argument (e.g., `--w-noise 0.7` to weight noise fraction more heavily). e.g.
+Ranking for HDBSCAN by default is based on Silhouette scores only. You can optionally use a combined metric between Silhouette scores and fraction of points labelled as noise (e.g., `silhouette - w x noise_fraction`), which may be preferable in some cases to avoid solutions that label most points as noise. By default, the weighting (w) is 0.5 for the noise-fraction, but you can adjust this with the `--noise-weight` argument (e.g., `--w-noise 0.7` to weight noise fraction more heavily). e.g.
 
 `python src/tools/rank_hdbscan_results.py outputs/results/<tag>_tuning_hdbscan.json --top 20 --composite --w-noise 0.7`
 
@@ -132,7 +150,7 @@ Ranking for HDBSCAN by default is based on Silhouette scores only. You can optio
 
 By default the pipeline writes:
 
-- Embeddings: `outputs/embeddings/embeddings_small.parquet`, `outputs/embeddings/embeddings_large.parquet`
+- Embeddings: `outputs/embeddings/embeddings_large.parquet` (OpenAI)
 
 - TriMAP metrics: `outputs/results/<tag>_trimap.json`
 
@@ -151,6 +169,8 @@ By default the pipeline writes:
 The pipeline fixes random seeds via `seed` in the YAML config.
 
 Additionally, it writes a run metadata JSON including effective config and package versions to `outputs/results/<tag>_meta.json`.
+
+To re-run the experiments as presented in the main paper and supplementary information, see `reproducibility_logs.md`.
 
 ## Notes
 

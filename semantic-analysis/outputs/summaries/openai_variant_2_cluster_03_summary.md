@@ -1,0 +1,10 @@
+**Proposed cluster label:** Narratives as Ideological Meaning Frameworks Guiding Significance-Seeking Behavior
+
+**Synthesis paragraph:** Across these excerpts, a narrative is consistently defined as a socially shared ideological framework that performs two interlocking functions: it provides individuals with interpretive structures for understanding social reality, and it prescribes specific behavioral pathways for satisfying fundamental psychological needs—particularly the need for personal significance, belonging, and perceived control. Narratives are neither purely cognitive nor purely social; their efficacy depends on validation by meaningful social networks. They legitimize particular actions—potentially including morally transgressive ones—by embedding them within coherent value systems that render such actions necessary or laudable. The framework is explicitly bidirectional, encompassing both explanatory and prescriptive dimensions.
+
+**Sub-themes:**
+- **Significance motivation as the core psychological driver:** Narratives are specifically theorized as mechanisms for restoring or enhancing individuals' sense of mattering, with ideological content calibrated to address significance deficits.
+- **Social validation as a condition of narrative efficacy:** A narrative's capacity to fulfill psychological needs is contingent on endorsement by socially relevant networks, not on its content alone.
+- **Ingroup/outgroup structuring:** Narratives organize meaning partly through value-laden differentiation between social categories, attributing grievances to identifiable outgroups and legitimizing ingroup-directed responses.
+
+**Optional note:** The excerpts appear drawn from a single theoretical tradition (likely Significance Quest Theory), limiting cross-paradigm generalizability.

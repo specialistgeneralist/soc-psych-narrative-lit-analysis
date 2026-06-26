@@ -1,0 +1,29 @@
+baseline_config: configs/baseline_openai.yaml
+baseline_tag: baseline_openai
+baseline_model_key: large
+baseline_name: openai_large_baseline
+
+variant_config: configs/baseline_gemini.yaml
+variant_tag: baseline_gemini
+variant_model_key: google_gemini_embedding_001
+variant_name: google_gemini_baseline
+
+output_dir: outputs/embedding_comparison
+
+# This runner is deliberately load-only: it reads existing embeddings and labels
+# from outputs/embeddings and outputs/results, and never calls OpenAI, Vertex, or gcloud.
+reuse_existing_only: true
+
+# Representative-subpopulation comparison. Representatives are recomputed from
+# the OpenAI baseline labels and OpenAI baseline embeddings using the same
+# nearest-to-centroid method as summarize_clusters(), so it reflects the current
+# baseline labels even if an older summaries_index.json is stale.
+# Set to none/null/all to use all eligible baseline-cluster items instead of
+# top-k filtering. Eligibility is controlled by include_noise_representatives below.
+# Override without editing this file via:
+#   python -m src.robustness.run_embedding_comparison --representative-top-k all
+#   python -m src.robustness.run_embedding_comparison --representative-top-k 5
+representative_top_k_per_cluster: none
+representative_metric: cosine
+include_noise_representatives: false
+write_representative_text: true

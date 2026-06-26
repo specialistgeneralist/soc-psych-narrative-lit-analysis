@@ -1,0 +1,22 @@
+{
+  "records": [
+    {
+      "experiment": "A_vector_representation",
+      "baseline": "baseline",
+      "variant": "openai_small_embeddings",
+      "n_common": 129,
+      "n_baseline_total": 129,
+      "n_variant_total": 129,
+      "baseline_frac_noise_common": 0.09302325581395349,
+      "variant_frac_noise_common": 0.08527131782945736,
+      "baseline_n_clusters_common": 5,
+      "variant_n_clusters_common": 6,
+      "ari": 0.33988373887545653,
+      "ami": 0.44264711577582133,
+      "nmi": 0.4843710069904666,
+      "noise_status_agreement": 0.8527131782945736,
+      "co_cluster_jaccard": 0.29678899082568805,
+      "embedding_model_key": "small"
+    }
+  ]
+}

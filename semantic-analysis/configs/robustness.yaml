@@ -1,0 +1,28 @@
+baseline_config: configs/baseline_openai.yaml
+baseline_tag: baseline_openai
+baseline_model_key: large
+output_dir: outputs/robustness
+trimap_n_iters: 1000
+
+# B. Pseudo-random seed variation for the PCA gateway used by HDBSCAN.
+run_seed_variants: true 
+seed_variants: [7, 123, 2026, 31415, 8675309]
+
+# C. HDBSCAN regimes from tuning results.
+run_hdbscan_regime_comparison: true
+hdbscan_variant_tags: [openai_variant_1, openai_variant_2]
+hdbscan_variant_configs: [configs/openai_variant_1.yaml, configs/openai_variant_2.yaml]
+
+# D. Labelling model choice.
+run_labelling_variants: true 
+# labelling_variants: []
+labelling_variants:
+  - provider: anthropic
+    model: claude-opus-4-8
+    tag: label_anthropic_opus48
+
+# E. Knockout trials: subsample and compare surviving ids/pairs to baseline.
+run_knockout_trials: true
+knockout_fractions: [0.9, 0.8, 0.7]
+knockout_trials_per_fraction: 10
+knockout_seed: 424242

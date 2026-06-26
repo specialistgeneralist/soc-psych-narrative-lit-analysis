@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
+from typing import Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,8 +23,43 @@ except Exception:  # pragma: no cover - safe fallback
 from .config import PipelineConfig
 
 
+# For the typical use-case here (roughly <= 5 substantive clusters), an explicit
+# high-contrast palette works better than sampling from a larger categorical map
+# like tab20, especially once fills are lightened and drawn transparently.
+# The colors below are chosen to stay distinct on a white background and remain
+# reasonably robust for color-vision deficiencies.
+_DEFAULT_CLUSTER_PALETTE = [
+    "#0072B2",  # blue
+    "#D55E00",  # vermillion
+    "#009E73",  # bluish green
+    "#CC79A7",  # reddish purple
+    "#B79F00",  # mustard / dark yellow
+]
+
+# Step through marker shapes alongside cluster colours so clusters remain
+# distinguishable in greyscale, for colour-vision deficiencies, and in dense
+# regions where adjacent colours can be hard to separate. These are all common
+# filled Matplotlib markers chosen for visibly different silhouettes.
+_DEFAULT_CLUSTER_MARKERS = [
+    "o",  # circle
+    "s",  # square
+    "D",  # diamond
+    "^",  # triangle up
+    ">",  # triangle right
+    "v",  # triangle down
+    "<",  # triangle left
+    "h",  # hexagon
+    "P",  # plus filled
+    "p",  # pentagon
+    "*",  # star
+    "X",  # x filled
+]
+
+ClusterBoundaryStyle = Literal["density", "hull", "none"]
+
+
 # --- Visualization stage ---
-# Render the 2D embedding with cluster coloring and optional cluster boundary overlays (hulls or KDE contours).
+# Render the 2D embedding with cluster coloring and optional cluster density / legacy hull overlays.
 
 
 def _lighten_color(color: tuple[float, float, float], amount: float = 0.4) -> tuple[float, float, float]:
@@ -80,16 +115,15 @@ def _draw_convex_hull(
     ax.add_patch(poly)
 
 
-def _draw_kde_percentile_contour(
+def _draw_kde_density_region(
     ax,
     pts: np.ndarray,
     base_color: tuple[float, float, float],
     mass: float,
-    contour_linewidth: float = 1.6,
-    contour_alpha: float = 0.95,
+    fill_alpha: float,
     gridsize: int = 200,
 ) -> None:
-    """Draw a KDE contour enclosing approximately `mass` probability mass.
+    """Shade the KDE super-level region enclosing approximately `mass` probability mass.
 
     The contour level is chosen so that the integral of the estimated density over
     the super-level set is approximately equal to `mass`.
@@ -161,18 +195,35 @@ def _draw_kde_percentile_contour(
     if not np.isfinite(level):
         return
 
+    zmax = float(np.max(zz))
+    if not np.isfinite(zmax) or level >= zmax:
+        return
+
+    face_color = _lighten_color(base_color, amount=0.55)
+
     try:
-        ax.contour(
+        ax.contourf(
             xx,
             yy,
             zz,
-            levels=[level],
-            colors=[mcolors.to_rgba(base_color, alpha=contour_alpha)],
-            linewidths=contour_linewidth,
-            zorder=2,
+            levels=[level, zmax],
+            colors=[mcolors.to_rgba(face_color, alpha=fill_alpha)],
+            antialiased=True,
+            zorder=1,
         )
     except Exception:
         return
+
+
+def _resolve_marker_size(cfg: PipelineConfig, marker_size: float | None) -> float:
+    if marker_size is not None:
+        resolved = float(marker_size)
+    else:
+        visualization_cfg = getattr(cfg, "visualization", None)
+        resolved = float(getattr(visualization_cfg, "marker_size", 20.0))
+    if resolved <= 0:
+        raise ValueError("Visualization marker size must be > 0.")
+    return resolved
 
 
 def plot_embedding(
@@ -184,20 +235,24 @@ def plot_embedding(
     title: str = "TriMAP 2D embedding with HDBSCAN clusters",
     *,
     draw_hulls: bool = True,
+    boundary_style: ClusterBoundaryStyle = "density",
     hull_alpha: float = 0.15,
     hull_edge_alpha: float = 0.7,
+    density_alpha: float = 0.15,
+    density_percentile: float = 75.0,
     label_clusters: bool = True,
-    label_fontsize: int = 9,
+    label_fontsize: int = 12,
     label_with_size: bool = False,
     contour_mass_percentile: float | None = None,
+    marker_size: float | None = None,
 ) -> None:
     """
     Plot a 2D embedding with cluster coloring.
 
     Enhancements:
     - Optionally draw a semi-transparent convex hull for each non-noise cluster.
-    - Optionally draw a KDE contour boundary enclosing a target probability mass
-      for each non-noise cluster instead of a convex hull.
+    - By default, shade the 2D KDE density region enclosing a target probability
+      mass for each non-noise cluster.
     - Optionally place a cluster label at the centroid (skip noise label -1).
 
     Parameters
@@ -215,12 +270,20 @@ def plot_embedding(
     title: str
         Plot title.
     draw_hulls: bool
-        If True and SciPy is available, draw a convex hull per cluster (label != -1)
-        when `contour_mass_percentile` is not provided.
+        Legacy compatibility flag. Hulls are only drawn when `boundary_style="hull"`
+        and this is True.
+    boundary_style: {"density", "hull", "none"}
+        Cluster overlay style. "density" shades a KDE super-level region,
+        "hull" uses the legacy convex hull polygon, and "none" disables overlays.
     hull_alpha: float
         Face alpha for hull polygons.
     hull_edge_alpha: float
         Edge alpha for hull polygons.
+    density_alpha: float
+        Face alpha for density-region shading.
+    density_percentile: float
+        Density contour mass percentile to shade for each cluster. Accepts either
+        0-1 (e.g. 0.75) or 0-100 (e.g. 75). Higher values shade more area.
     label_clusters: bool
         If True, annotate cluster centroids (label != -1).
     label_fontsize: int
@@ -228,11 +291,21 @@ def plot_embedding(
     label_with_size: bool
         If True, show cluster size next to label id, e.g. "5 (n=123)".
     contour_mass_percentile: float | None
-        If provided, draw a KDE contour enclosing this fraction of probability mass
-        (e.g. 0.9 or 90 for a 90% contour) instead of convex hulls.
+        Backwards-compatible alias for `density_percentile`. If provided, selects
+        `boundary_style="density"` and shades the corresponding KDE mass region.
+    marker_size: float | None
+        Matplotlib scatter marker size. If None, use `cfg.visualization.marker_size`
+        when available, falling back to 20.0.
     """
 
-    contour_mass = _normalize_percentile_mass(contour_mass_percentile)
+    if boundary_style not in ("density", "hull", "none"):
+        raise ValueError("boundary_style must be one of: 'density', 'hull', 'none'.")
+
+    if contour_mass_percentile is not None:
+        boundary_style = "density"
+        density_percentile = contour_mass_percentile
+
+    density_mass = _normalize_percentile_mass(density_percentile) if boundary_style == "density" else None
 
     df = pd.DataFrame({"x": Y[:, 0], "y": Y[:, 1], "label": labels, "id": ids})
 
@@ -241,21 +314,65 @@ def plot_embedding(
     # Color palette: -1 as grey
     unique_labels = sorted(set(labels))
     n_clusters = len([l for l in unique_labels if l != -1])
-    palette = sns.color_palette("tab20", n_colors=max(n_clusters, 1))
+    if n_clusters <= len(_DEFAULT_CLUSTER_PALETTE):
+        palette = sns.color_palette(_DEFAULT_CLUSTER_PALETTE[: max(n_clusters, 1)])
+    else:
+        # Fall back gracefully if a future run produces more than the usual number
+        # of clusters. tab20 is still acceptable in that less common case.
+        palette = sns.color_palette("tab20", n_colors=max(n_clusters, 1))
 
     # Build a deterministic label->color mapping so plots remain comparable across runs.
     color_map: dict[int, tuple[float, float, float]] = {}
-    color_iter = iter(palette)
+    marker_map: dict[int, str] = {}
+    non_noise_labels = [lab for lab in unique_labels if lab != -1]
+    for idx, lab in enumerate(non_noise_labels):
+        color_map[int(lab)] = palette[idx]
+        marker_map[int(lab)] = _DEFAULT_CLUSTER_MARKERS[idx % len(_DEFAULT_CLUSTER_MARKERS)]
+
     for lab in unique_labels:
         if lab == -1:
             color_map[lab] = (0.6, 0.6, 0.6)
-        else:
-            color_map[lab] = next(color_iter)
+            marker_map[lab] = "x"
 
-    colors = [color_map[int(l)] for l in labels]
-    plt.scatter(df["x"], df["y"], c=colors, s=20, alpha=0.9, edgecolor="none", zorder=10)
+    resolved_marker_size = _resolve_marker_size(cfg, marker_size)
 
     ax = plt.gca()
+
+    # Draw one scatter layer per cluster so each cluster receives a stable
+    # colour-marker pair. Noise remains grey and uses an x marker.
+    for lab in unique_labels:
+        cluster_df = df.loc[df.label == lab]
+        if cluster_df.empty:
+            continue
+        if lab == -1:
+            ax.scatter(
+                cluster_df["x"],
+                cluster_df["y"],
+                c=[color_map[int(lab)]],
+                s=resolved_marker_size,
+                marker='x',
+                alpha=0.65,
+                linewidths=0.8,
+                zorder=10,
+            )
+        else:
+            this_marker = marker_map[int(lab)]
+            # check if marker is not one of the basic three o, s, D, and scale if so.
+            if this_marker not in ("o", "s", "D"):
+                this_marker_size = resolved_marker_size * 2 
+            else:
+                this_marker_size = resolved_marker_size
+            ax.scatter(
+                cluster_df["x"],
+                cluster_df["y"],
+                c=[color_map[int(lab)]],
+                s=this_marker_size,
+                marker=this_marker,
+                alpha=0.9,
+                edgecolors="white",
+                linewidths=0.35,
+                zorder=10,
+            )
 
     # Draw cluster boundaries (excluding noise)
     for lab in unique_labels:
@@ -264,9 +381,9 @@ def plot_embedding(
         pts = df.loc[df.label == lab, ["x", "y"]].to_numpy()
         base_color = color_map[int(lab)]
 
-        if contour_mass is not None:
-            _draw_kde_percentile_contour(ax, pts, base_color, mass=contour_mass)
-        elif draw_hulls:
+        if density_mass is not None:
+            _draw_kde_density_region(ax, pts, base_color, mass=density_mass, fill_alpha=density_alpha)
+        elif boundary_style == "hull" and draw_hulls:
             _draw_convex_hull(ax, pts, base_color, hull_alpha=hull_alpha, hull_edge_alpha=hull_edge_alpha)
 
     # Label cluster centroids (excluding noise)
@@ -275,12 +392,14 @@ def plot_embedding(
             if lab == -1:
                 continue
             pts = df.loc[df.label == lab, ["x", "y"]].to_numpy()
+            base_color = color_map[int(lab)]
             if pts.shape[0] == 0:
                 continue
             centroid = pts.mean(axis=0)
-            label_text = f"{lab}"
+            # adjust label text to 1-index, rather than 0-index, for human readability
+            label_text = f"{lab + 1}"
             if label_with_size:
-                label_text = f"{lab} (n={pts.shape[0]})"
+                label_text = f"{lab + 1} (n={pts.shape[0]})"
 
             txt = ax.text(
                 centroid[0],
@@ -289,7 +408,7 @@ def plot_embedding(
                 ha="center",
                 va="center",
                 fontsize=label_fontsize,
-                color="black",
+                color=base_color,
                 weight="bold",
                 zorder=20,
             )
