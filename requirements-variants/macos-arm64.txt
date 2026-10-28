@@ -1,0 +1,9 @@
+# Python 3.11, macOS arm64 with a native Apple Silicon interpreter.
+# Compatibility profile, not a fully locked or end-to-end validated environment.
+# An Intel interpreter under Rosetta must use macos-intel.txt instead.
+-r ../requirements.txt
+
+numba==0.64.0
+llvmlite==0.46.0
+# Current PyArrow wheels require NumPy 2; Numba 0.64 supports versions <2.5.
+numpy>=2,<2.5

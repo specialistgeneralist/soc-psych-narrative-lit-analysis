@@ -1,0 +1,9 @@
+# Python 3.11, Windows x86_64 / AMD64; not Windows ARM64 or 32-bit Python.
+# Compatibility profile, not a fully locked or end-to-end validated environment.
+# Includes the portable requirements; do not combine with requirements-lock.txt.
+-r ../requirements.txt
+
+numba==0.64.0
+llvmlite==0.46.0
+# Current PyArrow wheels require NumPy 2; Numba 0.64 supports versions <2.5.
+numpy>=2,<2.5

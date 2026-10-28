@@ -1,0 +1,55 @@
+# Portable installation requirements; recommended interpreter: Python 3.11.
+# Keep these compatibility rules when updating dependencies from /src imports.
+# LLVM is bundled in llvmlite wheels; fail early rather than build it locally.
+# Require PyArrow/PyTorch wheels too; do not accidentally build Arrow or Torch.
+# Other packages (e.g. annoy) may still need a C/C++ compiler.
+--only-binary=numba,llvmlite,pyarrow,torch
+
+# Intel macOS wheels are unavailable for the newer locked Numba/llvmlite pair.
+# Markers use the running interpreter's architecture, including under Rosetta.
+# The extra NumPy requirement intersects with the general numpy entry below.
+# Keep NumPy 1.x for Intel PyTorch 2.2.2, imported transitively by TriMAP.
+numba==0.61.2 ; sys_platform == "darwin" and platform_machine == "x86_64"
+llvmlite==0.44.0 ; sys_platform == "darwin" and platform_machine == "x86_64"
+numpy>=1.24,<2 ; sys_platform == "darwin" and platform_machine == "x86_64"
+
+# PyArrow 26+ requires NumPy 2; keep the non-Intel stack on that ABI.
+numpy>=2 ; sys_platform != "darwin" or platform_machine != "x86_64"
+pandas>=2.2.2
+
+# Config + env
+python-dotenv
+PyYAML
+
+# API clients
+openai
+anthropic
+# Google Vertex embeddings use local Application Default Credentials through
+# the `gcloud` CLI plus Python standard-library REST calls; no Python Google
+# SDK dependency is required for that optional robustness arm.
+
+# Dimensionality reduction + clustering
+scikit-learn
+trimap
+# TriMAP 1.2 imports PyTorch even for its legacy NumPy/Numba estimator.
+# 2.2.2 is the last official Intel macOS wheel; it needs NumPy 1.x above.
+torch==2.2.2 ; sys_platform == "darwin" and platform_machine == "x86_64"
+# Exclude older NumPy-1-only wheels on platforms where NumPy 2 is allowed.
+torch>=2.4.1 ; sys_platform != "darwin" or platform_machine != "x86_64"
+hdbscan
+
+# Plotting
+matplotlib
+seaborn
+
+# Optional but used for hulls/KDE contours in visualization
+scipy
+
+# Parquet I/O (pandas.read_parquet / to_parquet)
+# 17 includes NumPy 2 compatibility fixes and supports NumPy 1.x as well.
+pyarrow>=17.0.0
+# Arrow 26 dropped NumPy 1.x support; Intel PyTorch prevents upgrading NumPy.
+pyarrow<26 ; sys_platform == "darwin" and platform_machine == "x86_64"
+
+# Version parsing (packaging.version)
+packaging

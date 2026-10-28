@@ -1,13 +1,16 @@
+# Local credentials (keep the empty templates publishable).
 .env
-*.pyc
+.env.*
+!.env.example
+
+# Python environments and generated caches, at any depth.
+venv/
+venv-*/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local machine / assistant metadata.
 .DS_Store
 .assistantignore
-semantic-analysis/venv-macstudio/
-semantic-analysis/venv-macstudio/
-semantic-analysis/src/__pycache__/
-semantic-analysis/src/pipeline/__pycache__/
-semantic-analysis/src/pipeline/__pycache__/config.cpython-311.pyc
-semantic-analysis/src/pipeline/__pycache__/dimred.cpython-311.pyc
-semantic-analysis/src/pipeline/__pycache__/summarize.cpython-311.pyc
-semantic-analysis/src/pipeline/__pycache__/visualize.cpython-311.pyc
-semantic-analysis/src/__pycache__/main.cpython-311.pyc

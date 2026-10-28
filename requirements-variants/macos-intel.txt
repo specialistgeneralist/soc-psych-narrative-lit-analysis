@@ -1,0 +1,13 @@
+# Python 3.11, macOS x86_64 (including an Intel interpreter under Rosetta).
+# Compatibility profile, not a fully locked or end-to-end validated environment.
+# Includes the portable requirements; do not combine with requirements-lock.txt.
+-r ../requirements.txt
+
+numba==0.61.2
+llvmlite==0.44.0
+# Last official Intel macOS PyTorch wheel; also constrained in requirements.txt.
+torch==2.2.2
+# PyTorch 2.2.2, imported by TriMAP, requires the NumPy 1.x binary interface.
+numpy>=1.24,<2
+# Arrow 26 requires NumPy 2; retain a NumPy-1-compatible Parquet engine.
+pyarrow>=17.0.0,<26

@@ -1,0 +1,14 @@
+{
+  "source": "trimap",
+  "metrics": {
+    "trustworthiness@10": 0.8672540381791483
+  },
+  "params": {
+    "n_inliers": 20,
+    "n_outliers": 5,
+    "n_random": 3,
+    "n_iters": 400,
+    "metric": "euclidean",
+    "seed": 42
+  }
+}
