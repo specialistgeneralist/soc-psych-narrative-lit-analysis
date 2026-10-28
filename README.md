@@ -1,5 +1,7 @@
 # Analysing Narrative Definitions in Semantic Space
 
+Release v1.0.0, [![DOI](https://zenodo.org/badge/1117913392.svg)](https://doi.org/10.5281/zenodo.23720579)
+
 Replication code for 
 
 📓 **“What's the Story? A Scoping Review of the Concept of Narratives in Psychological Studies of Ideological Extremism”**
